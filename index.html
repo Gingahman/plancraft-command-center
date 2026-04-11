@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanCraft Command Center</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  /* Dark Elegant Theme */
+  --bg-dark-primary: #0F172A;
+  --bg-card-glass: #1E293B;
+  --accent-blue: #94A3B8;
+  --accent-glow: rgba(148, 163, 184, 0.08);
+  --accent-glow-strong: rgba(148, 163, 184, 0.12);
+  --gold: #D4AF37;
+  --gold-glow: rgba(212, 175, 55, 0.15);
+  --gold-light: #E8CC6E;
+  --gold-dark: #B8941E;
+  --white: #1E293B;
+  --gray-100: #1E293B;
+  --gray-200: #334155;
+  --gray-300: #475569;
+  --gray-400: #94A3B8;
+  --gray-500: #CBD5E1;
+  --green: #34D399;
+  --green-glow: rgba(52, 211, 153, 0.12);
+  --red: #F87171;
+  --orange: #FBBF24;
+  --amber-glow: rgba(251, 191, 36, 0.12);
+  --blue: #94A3B8;
+  --blue-glow: rgba(148, 163, 184, 0.06);
+  --purple: #A78BFA;
+  --purple-glow: rgba(167, 139, 250, 0.1);
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --bg-dark: #0F172A;
+  --bg-card: #1E293B;
+  --bg-secondary: #334155;
+  --border-dark: #475569;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* Glassmorphism base class */
+.glass {
+  background: #1E293B;
+  border: 1px solid #475569;
+}
+
+/* Neon glow effects */
+.accent-border {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  border: 1px solid #475569;
+}
+
+.accent-glow-blue {
+  color: var(--accent-blue);
+}
+
+.accent-glow-gold {
+  color: var(--gold);
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  border-bottom: 1px solid #475569;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #D4AF37 0%, #E8CC6E 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0A0A0F;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.header h1 {
+  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.header h1 span {
+  color: var(--accent-blue);
+  
+}
+
+.header-date {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* Tabs */
+.tabs {
+  background: #1E293B;
+  border-bottom: 1px solid #475569;
+  display: flex;
+  padding: 0 32px;
+  gap: 0;
+  overflow-x: auto;
+  
+}
+
+.tab {
+  padding: 14px 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tab:hover {
+  color: var(--accent-blue);
+  background: var(--bg-secondary);
+}
+
+.tab.active {
+  color: var(--accent-blue);
+  border-bottom-color: var(--accent-blue);
+  
+  
+}
+
+/* Content */
+.content {
+  padding: 24px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* KPI Row */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: rgba(14, 14, 26, 0.6);
+  border-radius: 10px;
+  padding: 12px 10px;
+  
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  min-width: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.kpi-card:hover::before {
+  opacity: 1;
+}
+
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent-blue);
+  margin: 4px 0 2px;
+  animation: pulse 2s ease-in-out infinite;
+  
+}
+
+@keyframes pulse {
+  0%, 100% {  }
+  50% {  }
+}
+
+.kpi-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.kpi-card.gold .kpi-value {
+  color: var(--gold-light);
+  
+  border-left: 2px solid var(--gold);
+  padding-left: 8px;
+}
+
+.kpi-card.gold::before {
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.kpi-card.green .kpi-value {
+  color: var(--green);
+  
+}
+
+.kpi-card.green::before {
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+}
+
+.kpi-card.blue .kpi-value {
+  color: var(--blue);
+  
+}
+
+.kpi-card.blue::before {
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+}
+
+.kpi-card.purple .kpi-value {
+  color: var(--purple);
+  
+}
+
+.kpi-card.purple::before {
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  color: rgba(148, 163, 184, 0.1);
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 6px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(14, 14, 26, 0.4);
+  
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.3s;
+}
+
+.filter-btn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.06));
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  
+}
+
+/* Platform grid */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .platform-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .platform-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .platform-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.platform-card {
+  background: rgba(14, 14, 26, 0.5);
+  border-radius: 10px;
+  padding: 12px;
+  
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.platform-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.06) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.platform-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  border-color: rgba(71, 85, 105, 0.3);
+}
+
+.platform-card:hover::before {
+  opacity: 1;
+}
+
+.platform-card .priority-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.priority-badge.p0 {
+  background: linear-gradient(135deg, #FEF3C7, #FCD34D);
+  color: #92400E;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.priority-badge.p1 {
+  background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+  color: #1E40AF;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.priority-badge.p2 {
+  background: #E5E7EB;
+  color: #374151;
+}
+
+.priority-badge.p3 {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.platform-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.platform-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.platform-category {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.platform-audience {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 3px;
+}
+
+.platform-commission {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.platform-fit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.fit-star {
+  color: var(--gold);
+  font-size: 12px;
+  
+}
+
+.fit-star.empty {
+  color: var(--border-dark);
+  text-shadow: none;
+}
+
+.platform-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.status-active {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--green);
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #F59E0B;
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  
+}
+
+.status-not-started {
+  background: rgba(107, 114, 128, 0.2);
+  color: var(--text-secondary);
+  border-color: var(--border-dark);
+}
+
+.platform-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.06);
+}
+
+.pm-item {}
+
+.pm-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.pm-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal {
+  background: rgba(14, 14, 26, 0.95);
+  border-radius: 10px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  padding: 32px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  
+  animation: modalIn 0.3s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #475569;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(14, 14, 26, 0.6);
+  
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+}
+
+.modal-close:hover {
+  background: rgba(148, 163, 184, 0.06);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.modal-info-item {
+  background: rgba(14, 14, 26, 0.4);
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  
+  box-shadow: inset 0 0 10px rgba(71, 85, 105, 0.3);
+}
+
+.modal-info-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.modal-info-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.modal-products-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  
+}
+
+.modal-product-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(14, 14, 26, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.06);
+  margin-bottom: 8px;
+  
+  transition: all 0.2s;
+}
+
+.modal-product-row:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.modal-product-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.modal-product-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Plan table */
+.plan-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(14, 14, 26, 0.4);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  
+}
+
+.plan-table thead th {
+  background: rgba(8, 8, 18, 0.8);
+  color: var(--text-primary);
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #475569;
+  
+}
+
+.plan-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+  font-size: 13px;
+  vertical-align: top;
+  color: var(--text-primary);
+}
+
+.plan-table tbody tr:hover {
+  background: rgba(148, 163, 184, 0.03);
+}
+
+.plan-table tbody tr.phase-header td {
+  background: rgba(8, 8, 18, 0.6);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 14px;
+  border-bottom: 1px solid #475569;
+  
+}
+
+.plan-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.plan-table a {
+  color: var(--blue);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.plan-table a:hover {
+  text-decoration: underline;
+  
+}
+
+.plan-progress {
+  height: 6px;
+  background: rgba(148, 163, 184, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 4px;
+  box-shadow: inset 0 0 5px rgba(148, 163, 184, 0.06);
+}
+
+.plan-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--gold));
+  border-radius: 10px;
+  transition: width 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: rgba(14, 14, 26, 0.4);
+  
+  transition: all 0.3s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  background: rgba(14, 14, 26, 0.6);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.form-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.btn-add-product {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #D4AF37 0%, #E8CC6E 100%);
+  color: #0A0A0F;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.btn-add-product:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.06);
+  color: var(--accent-blue);
+  font-weight: 700;
+  font-size: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.btn-submit:hover {
+  background: rgba(71, 85, 105, 0.4);
+  border-color: var(--accent-blue);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  
+}
+
+/* Product catalog */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.product-card {
+  background: rgba(14, 14, 26, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.product-card:hover {
+  border-color: rgba(71, 85, 105, 0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+}
+
+.product-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.product-card-icon {
+  font-size: 20px;
+}
+
+.product-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.product-card-category {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.product-card-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+  
+}
+
+.product-card-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.pstatus-draft {
+  background: rgba(239, 68, 68, 0.2);
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.pstatus-ready {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--green);
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.pstatus-published {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--green);
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.pstatus-selling {
+  background: rgba(245, 158, 11, 0.2);
+  color: #F59E0B;
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.pstatus-pending {
+  background: rgba(107, 114, 128, 0.2);
+  color: var(--text-secondary);
+  border-color: var(--border-dark);
+}
+
+.product-detail {
+  display: none;
+  background: rgba(8, 8, 18, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.06);
+  border-top: none;
+  padding: 16px;
+  margin-top: -1px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  
+}
+
+.product-detail.expanded {
+  display: block;
+}
+
+.product-detail-section {
+  margin-bottom: 12px;
+}
+
+.product-detail-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.product-detail-value {
+  color: var(--text-primary);
+}
+
+.platforms-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ptag {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(148, 163, 184, 0.06);
+  color: var(--accent-blue);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.2s;
+}
+
+.ptag:hover {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: var(--accent-blue);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Finance */
+.finance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 800px) {
+  .finance-grid { grid-template-columns: 1fr; }
+}
+
+.finance-card {
+  background: rgba(14, 14, 26, 0.5);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  
+  transition: all 0.3s;
+}
+
+.finance-card:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.finance-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  
+}
+
+.expense-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.expense-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.expense-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold-light);
+  
+}
+
+.chart-container {
+  height: 250px;
+  position: relative;
+}
+
+/* Agents */
+.agent-pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 900px) {
+  .agent-pipeline { grid-template-columns: repeat(3, 1fr); }
+}
+
+.pipeline-stage {
+  background: rgba(14, 14, 26, 0.5);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  text-align: center;
+  
+  transition: all 0.3s;
+}
+
+.pipeline-stage:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.pipeline-stage .stage-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.pipeline-stage .stage-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pipeline-stage .stage-count {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent-blue);
+  
+}
+
+.pipeline-stage .stage-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.pipeline-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(148, 163, 184, 0.12);
+  font-size: 20px;
+}
+
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.agent-card {
+  background: rgba(14, 14, 26, 0.5);
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.agent-card:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.agent-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.agent-info {
+  flex: 1;
+}
+
+.agent-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.agent-role {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.agent-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.dot-active {
+  background: var(--green);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.dot-idle {
+  background: var(--border-dark);
+}
+
+.dot-pending {
+  background: var(--orange);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Delete button on product cards */
+.product-delete-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(239,68,68,0.3);
+  background: rgba(239,68,68,0.1);
+  color: #EF4444;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  opacity: 0;
+}
+.product-card:hover .product-delete-btn {
+  opacity: 1;
+}
+.product-delete-btn:hover {
+  background: #EF4444;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Copy button style */
+.copy-btn {
+  padding: 3px 10px;
+  background: rgba(96,165,250,0.15);
+  border: 1px solid rgba(148,163,184,0.12);
+  color: #94A3B8;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.copy-btn:hover {
+  background: #94A3B8;
+  color: #fff;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">P</div>
+    <div>
+      <h1>PlanCraft <span>Command Center</span></h1>
+      <div class="header-date" id="headerDate"></div>
+    </div>
+  </div>
+  <div style="color: var(--text-secondary); font-size: 13px;" id="headerStats">
+    <span style="color: var(--gold);">38</span> платформ &middot; <span style="color: var(--gold);" id="headerProductCount">46</span> продуктов &middot; <span style="color: var(--gold);">7</span> потоков дохода
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" data-tab="platforms">Площадки</div>
+  <div class="tab" data-tab="plan">План проекта</div>
+  <div class="tab" data-tab="catalog">Продуктовый каталог</div>
+  <div class="tab" data-tab="finance">Финансы</div>
+  <div class="tab" data-tab="agents">Агенты & Workflow</div>
+  <div class="tab" data-tab="marketing">🚀 Маркетинг</div>
+</div>
+
+<!-- TAB 1: Platforms -->
+<div class="content">
+<div class="tab-content active" id="tab-platforms">
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card gold">
+      <div class="kpi-label">Выручка / мес</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Цель: $1,000,000</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Продажи / мес</div>
+      <div class="kpi-value">0</div>
+      <div class="kpi-sub">Цель: 50,000+</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Активные площадки</div>
+      <div class="kpi-value">0 / 38</div>
+      <div class="kpi-sub">Зарегистрировано: 1 (Etsy)</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">Продуктов создано</div>
+      <div class="kpi-value">11</div>
+      <div class="kpi-sub">Цель: 300+ листингов</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Просмотры / мес</div>
+      <div class="kpi-value">0</div>
+      <div class="kpi-sub">По всем площадкам</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Конверсия</div>
+      <div class="kpi-value">0%</div>
+      <div class="kpi-sub">Средняя по площадкам</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Расходы / мес</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Бюджет: $500/мес</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">Чистая прибыль</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Маржа: —</div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="section-header">
+    <div>
+      <div class="section-title">Все площадки</div>
+      <div class="section-subtitle">Нажми на карточку для детальной информации и списка продуктов</div>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-btn active" data-filter="all">Все (38)</div>
+    <div class="filter-btn" data-filter="А">Маркетплейсы (10)</div>
+    <div class="filter-btn" data-filter="Б">Нишевые (8)</div>
+    <div class="filter-btn" data-filter="В">Creator (7)</div>
+    <div class="filter-btn" data-filter="Г">E-commerce (3)</div>
+    <div class="filter-btn" data-filter="Д">Курсы & Membership (5)</div>
+    <div class="filter-btn" data-filter="Е">Deal-платформы (3)</div>
+    <div class="filter-btn" data-filter="Ж">Контент (2)</div>
+  </div>
+  <div class="platform-grid" id="platformGrid"></div>
+</div>
+
+<!-- TAB 2: Plan -->
+<div class="tab-content" id="tab-plan">
+  <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="kpi-card gold">
+      <div class="kpi-label">Общий прогресс</div>
+      <div class="kpi-value" id="planProgress">0%</div>
+      <div class="plan-progress"><div class="plan-progress-fill" id="planProgressBar" style="width:0%"></div></div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Выполнено задач</div>
+      <div class="kpi-value" id="planDone">0</div>
+      <div class="kpi-sub" id="planTotal">из 0</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Текущая фаза</div>
+      <div class="kpi-value" style="font-size:18px">Фаза 0</div>
+      <div class="kpi-sub">Инфраструктура</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">Дедлайн фазы</div>
+      <div class="kpi-value" style="font-size:18px">День 7</div>
+      <div class="kpi-sub">Неделя 0</div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+    <!-- LEFT: Human tasks -->
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:700;color:var(--text-primary);">Задачи команды</div>
+        <span style="background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:0;font-size:11px;font-weight:600;">Руками</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;background:var(--bg-card);padding:10px 14px;border-radius:0;border:1px solid var(--border-dark);">
+        <span style="font-size:13px;color:var(--text-secondary);white-space:nowrap;">Исполнитель:</span>
+        <select id="humanAssignee" style="flex:1;padding:6px 10px;border-radius:0;border:1px solid var(--border-dark);font-size:13px;font-weight:600;color:var(--text-primary);background:var(--bg-secondary);cursor:pointer;" onchange="renderPlan()">
+          <option value="all">Все</option>
+          <option value="Gin">Gin</option>
+          <option value="Тарас">Тарас</option>
+          <option value="Дима">Дима</option>
+        </select>
+      </div>
+      <table class="plan-table" id="planTableHuman">
+        <thead>
+          <tr>
+            <th style="width:36px"></th>
+            <th>Задача</th>
+            <th>Кто</th>
+            <th>Зависимости</th>
+            <th>Ссылки</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody id="planBodyHuman"></tbody>
+      </table>
+    </div>
+
+    <!-- RIGHT: Agent tasks -->
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:700;color:var(--text-primary);">Задачи агентов</div>
+        <span style="background:#DBEAFE;color:#1E40AF;padding:3px 10px;border-radius:0;font-size:11px;font-weight:600;">AI</span>
+      </div>
+      <div style="height:40px;margin-bottom:14px;display:flex;align-items:center;padding:0 14px;">
+        <span style="font-size:13px;color:var(--text-secondary);">Выполняются Claude и другими AI-агентами автоматически</span>
+      </div>
+      <table class="plan-table" id="planTableAgent">
+        <thead>
+          <tr>
+            <th style="width:36px"></th>
+            <th>Задача</th>
+            <th>Агент</th>
+            <th>Зависимости</th>
+            <th>Ссылки</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody id="planBodyAgent"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: Product Catalog -->
+<div class="tab-content" id="tab-catalog">
+  <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr);">
+    <div class="kpi-card gold">
+      <div class="kpi-label">Всего продуктов</div>
+      <div class="kpi-value" id="catTotal">46</div>
+      <div class="kpi-sub">В каталоге</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Готово к продаже</div>
+      <div class="kpi-value" id="catReady">46</div>
+      <div class="kpi-sub">Файлы созданы</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Запланировано</div>
+      <div class="kpi-value" id="catPending">0</div>
+      <div class="kpi-sub">Брифы готовы</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">Всего файлов</div>
+      <div class="kpi-value" id="catFiles">0</div>
+      <div class="kpi-sub">Продукты + ассеты</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Бренд-ассетов</div>
+      <div class="kpi-value" id="catAssets">0</div>
+      <div class="kpi-sub">Логотипы, тексты, стратегии</div>
+    </div>
+  </div>
+
+  <!-- Product filter + add button -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div class="filter-bar" style="margin-bottom:0;">
+      <div class="filter-btn active" data-cat-filter="all">Все</div>
+      <div class="filter-btn" data-cat-filter="ready" id="filterReady">Готовые</div>
+      <div class="filter-btn" data-cat-filter="draft" id="filterDraft">Черновики</div>
+      <div class="filter-btn" data-cat-filter="pending" id="filterPending">Запланировано</div>
+    </div>
+    <button class="btn-add-product" onclick="openAddProductModal()">＋ Добавить продукт</button>
+  </div>
+
+  <div id="catalogCards" class="product-grid"></div>
+
+  <!-- Add Product Modal -->
+  <div class="modal-overlay" id="addProductModal">
+    <div class="modal">
+      <h2>＋ Новый продукт <button class="modal-close" onclick="closeAddProductModal()">✕</button></h2>
+      <form id="addProductForm" onsubmit="submitAddProduct(event)">
+        <div class="form-group">
+          <label class="form-label">Название продукта *</label>
+          <input class="form-input" id="ap_name" required placeholder="Например: Savings Goal Tracker 2026">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Категория *</label>
+            <select class="form-select" id="ap_cat" required>
+              <option value="">Выбрать...</option>
+              <option value="Финансы">Финансы</option>
+              <option value="Бизнес">Бизнес</option>
+              <option value="Продуктивность">Продуктивность</option>
+              <option value="Маркетинг">Маркетинг</option>
+              <option value="Спорт">Спорт</option>
+              <option value="Свадьба">Свадьба</option>
+              <option value="Образование">Образование</option>
+              <option value="AI">AI</option>
+              <option value="Дизайн">Дизайн</option>
+              <option value="Планер">Планер</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Формат *</label>
+            <select class="form-select" id="ap_format" required>
+              <option value="">Выбрать...</option>
+              <option value="Excel (.xlsx)">Excel (.xlsx)</option>
+              <option value="PDF Interactive">PDF Interactive</option>
+              <option value="HTML Interactive">HTML Interactive</option>
+              <option value="Notion Template">Notion Template</option>
+              <option value="Canva">Canva</option>
+              <option value="Markdown / PDF">Markdown / PDF</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Цена ($)</label>
+            <input class="form-input" id="ap_price" type="number" step="0.01" min="0" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Статус *</label>
+            <select class="form-select" id="ap_status" required>
+              <option value="pending">Запланирован</option>
+              <option value="draft">Черновик</option>
+              <option value="ready">Готов к продаже</option>
+              <option value="published">Опубликован</option>
+              <option value="selling">Продаётся</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Площадки</label>
+            <input class="form-input" id="ap_platforms" placeholder="Etsy, Gumroad">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Файлы продукта</label>
+          <input class="form-input" id="ap_files" placeholder="file1.xlsx, file2.pdf (через запятую)">
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">Имена файлов через запятую</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">SEO-листинг</label>
+            <input class="form-input" id="ap_listing" placeholder="Product_SEO.md">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Мокапы</label>
+            <input class="form-input" id="ap_mockups" placeholder="mockup1.png, mockup2.png">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Описание</label>
+          <textarea class="form-textarea" id="ap_desc" placeholder="Подробное описание продукта, кол-во формул, вкладок, фич..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Добавить продукт</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Brand Assets section -->
+  <div class="section-header" style="margin-top:32px;">
+    <div>
+      <div class="section-title">Бренд-ассеты и документы</div>
+      <div class="section-subtitle">Логотипы, тексты магазина, SEO-листинги, стратегии, промпты агентов</div>
+    </div>
+  </div>
+  <div id="brandAssetsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+</div>
+
+<!-- TAB 4: Finance -->
+<div class="tab-content" id="tab-finance">
+  <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr);">
+    <div class="kpi-card gold">
+      <div class="kpi-label">Выручка (мес)</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Цель: $1,000,000</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Расходы (мес)</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Бюджет: $500</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Чистая прибыль</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Маржа: —</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">ROI</div>
+      <div class="kpi-value">0%</div>
+      <div class="kpi-sub">Возврат на вложения</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Комиссии площадок</div>
+      <div class="kpi-value">$0</div>
+      <div class="kpi-sub">Суммарно</div>
+    </div>
+  </div>
+  <div class="finance-grid">
+    <div class="finance-card">
+      <h3>Расходы по категориям</h3>
+      <div id="expensesList"></div>
+      <div style="margin-top:12px; padding-top:12px; border-top:2px solid var(--navy); display:flex; justify-content:space-between;">
+        <span style="font-weight:700;">ИТОГО</span>
+        <span style="font-weight:700;" id="expensesTotal">$0</span>
+      </div>
+    </div>
+    <div class="finance-card">
+      <h3>Прогноз выручки (12 мес)</h3>
+      <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+    </div>
+    <div class="finance-card">
+      <h3>Выручка по потокам дохода</h3>
+      <div class="chart-container"><canvas id="streamsChart"></canvas></div>
+    </div>
+    <div class="finance-card">
+      <h3>ROI по площадкам (топ-10)</h3>
+      <div class="chart-container"><canvas id="roiChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: Agents -->
+<div class="tab-content" id="tab-agents">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Продуктовый пайплайн</div>
+      <div class="section-subtitle">Этапы создания каждого продукта</div>
+    </div>
+  </div>
+  <div class="agent-pipeline" id="pipelineStages"></div>
+
+  <div class="section-header" style="margin-top:28px;">
+    <div>
+      <div class="section-title">Команда агентов</div>
+      <div class="section-subtitle">100+ AI-ролей для параллельного производства</div>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-btn active" data-agent-filter="all">Все</div>
+    <div class="filter-btn" data-agent-filter="creation">Создание</div>
+    <div class="filter-btn" data-agent-filter="quality">QA & Дизайн</div>
+    <div class="filter-btn" data-agent-filter="marketing">Маркетинг</div>
+    <div class="filter-btn" data-agent-filter="ops">Операции</div>
+  </div>
+  <div class="agent-grid" id="agentGrid"></div>
+</div>
+
+<!-- TAB 6: Marketing -->
+<div class="tab-content" id="tab-marketing">
+  <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr);">
+    <div class="kpi-card gold">
+      <div class="kpi-label">Pinterest Pins</div>
+      <div class="kpi-value">35</div>
+      <div class="kpi-sub">5 типов × 7 продуктов</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Launch Day</div>
+      <div class="kpi-value">TBD</div>
+      <div class="kpi-sub">30-дневный план готов</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Etsy Ads Budget</div>
+      <div class="kpi-value">$1,980</div>
+      <div class="kpi-sub">4 недели, рост $50→$80/день</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">Automations</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">Zapier + Make сценариев</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Revenue Target</div>
+      <div class="kpi-value">$5K–$10K</div>
+      <div class="kpi-sub">Первый месяц</div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:24px;">
+    <div>
+      <div class="section-title">📌 Pinterest — 35 пинов</div>
+      <div class="section-subtitle">5 типов пинов на каждый продукт, расписание на 22 дня</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;" id="pinterestGrid"></div>
+
+  <div class="section-header" style="margin-top:24px;">
+    <div>
+      <div class="section-title">💰 Etsy Ads — стратегия по неделям</div>
+      <div class="section-subtitle">Тест → Оптимизация → Масштабирование → All-in</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="adsWeekGrid">
+    <div style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">WEEK 1: TEST</div>
+      <div style="color:#aaa;font-size:13px;margin-top:8px;">$50/день • $350 итого</div>
+      <div style="color:#ccc;font-size:12px;margin-top:8px;">• Все продукты по $5-7/день<br>• Равное тестирование<br>• Сбор данных CTR</div>
+    </div>
+    <div style="background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.3);border-radius:12px;padding:16px;">
+      <div style="color:#00C853;font-weight:700;font-size:14px;">WEEK 2: OPTIMIZE</div>
+      <div style="color:#aaa;font-size:13px;margin-top:8px;">$60/день • $420 итого</div>
+      <div style="color:#ccc;font-size:12px;margin-top:8px;">• 2x бюджет на топ-3<br>• Убить аутсайдеров<br>• Купоны 10%</div>
+    </div>
+    <div style="background:rgba(41,121,255,0.1);border:1px solid rgba(41,121,255,0.3);border-radius:12px;padding:16px;">
+      <div style="color:#2979FF;font-weight:700;font-size:14px;">WEEK 3: SCALE</div>
+      <div style="color:#aaa;font-size:13px;margin-top:8px;">$70/день • $490 итого</div>
+      <div style="color:#ccc;font-size:12px;margin-top:8px;">• 3x на лидера<br>• Бандлы в рекламу<br>• Group boards Pinterest</div>
+    </div>
+    <div style="background:rgba(156,39,176,0.1);border:1px solid rgba(156,39,176,0.3);border-radius:12px;padding:16px;">
+      <div style="color:#9C27B0;font-weight:700;font-size:14px;">WEEK 4: ALL-IN</div>
+      <div style="color:#aaa;font-size:13px;margin-top:8px;">$80/день • $720 итого</div>
+      <div style="color:#ccc;font-size:12px;margin-top:8px;">• All-in на winners<br>• Новые ключевые слова<br>• Анализ + план Month 2</div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:24px;">
+    <div>
+      <div class="section-title">🤖 Автоматизации (Zapier / Make)</div>
+      <div class="section-subtitle">6 сценариев для автопилота продаж</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
+    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">1. Etsy Sale → Notion</div>
+      <div style="color:#aaa;font-size:12px;margin-top:6px;">Каждая продажа автоматически в Sales Tracker</div>
+      <div style="color:#666;font-size:11px;margin-top:4px;">Zapier Free</div>
+    </div>
+    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">2. Pinterest Auto-Schedule</div>
+      <div style="color:#aaa;font-size:12px;margin-top:6px;">35 пинов запланированы на 22 дня через Tailwind</div>
+      <div style="color:#666;font-size:11px;margin-top:4px;">Tailwind $15/мес</div>
+    </div>
+    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">3. Weekly Report → Email</div>
+      <div style="color:#aaa;font-size:12px;margin-top:6px;">Каждое воскресенье: выручка, ROAS, Pinterest stats</div>
+      <div style="color:#666;font-size:11px;margin-top:4px;">Make.com Free</div>
+    </div>
+    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">4. Review Alert</div>
+      <div style="color:#aaa;font-size:12px;margin-top:6px;">Мгновенное уведомление о новых отзывах на Etsy</div>
+      <div style="color:#666;font-size:11px;margin-top:4px;">Zapier Free</div>
+    </div>
+    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">5. Favorite Spike Alert</div>
+      <div style="color:#aaa;font-size:12px;margin-top:6px;">Алерт если лайки продукта +20% за день</div>
+      <div style="color:#666;font-size:11px;margin-top:4px;">Make.com Free</div>
+    </div>
+    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+      <div style="color:#D4AF37;font-weight:700;font-size:14px;">6. Monthly Revenue Report</div>
+      <div style="color:#aaa;font-size:12px;margin-top:6px;">1-го числа: полный финансовый отчёт за месяц</div>
+      <div style="color:#666;font-size:11px;margin-top:4px;">Make.com Free</div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:24px;">
+    <div>
+      <div class="section-title">📂 Маркетинг-файлы</div>
+      <div class="section-subtitle">Все готовые материалы для запуска</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer;" onclick="alert('File: PlanCraft_Launch_Strategy_30Day.md')">
+      <div style="font-size:24px;margin-bottom:8px;">📋</div>
+      <div style="color:#D4AF37;font-weight:600;font-size:14px;">30-Day Launch Strategy</div>
+      <div style="color:#888;font-size:12px;">Полный план: календарь, бюджеты, KPI, чеклист</div>
+    </div>
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer;" onclick="alert('File: Pinterest_Pin_Copy_All35.md')">
+      <div style="font-size:24px;margin-bottom:8px;">📌</div>
+      <div style="color:#D4AF37;font-weight:600;font-size:14px;">Pinterest Pin Copy (35 пинов)</div>
+      <div style="color:#888;font-size:12px;">Тексты, описания, ключевые слова для каждого пина</div>
+    </div>
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer;" onclick="alert('File: Automation_Scenarios_ZapierMake.md')">
+      <div style="font-size:24px;margin-bottom:8px;">🤖</div>
+      <div style="color:#D4AF37;font-weight:600;font-size:14px;">Automation Playbook</div>
+      <div style="color:#888;font-size:12px;">6 Zapier/Make сценариев с пошаговой настройкой</div>
+    </div>
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer;" onclick="alert('Folder: pinterest_pins/ — 35 PNG images')">
+      <div style="font-size:24px;margin-bottom:8px;">🖼️</div>
+      <div style="color:#D4AF37;font-weight:600;font-size:14px;">Pinterest Pin Images (35 шт)</div>
+      <div style="color:#888;font-size:12px;">1000×1500px, Navy+Gold, 5 типов × 7 продуктов</div>
+    </div>
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:16px;cursor:pointer;" onclick="window.open('https://www.notion.so/33adb8a067158167a15afd9c8590b8eb','_blank')">
+      <div style="font-size:24px;margin-bottom:8px;">📊</div>
+      <div style="color:#D4AF37;font-weight:600;font-size:14px;">Notion Launch Dashboard</div>
+      <div style="color:#888;font-size:12px;">Sales Tracker + Pinterest Calendar + Ads + Checklist</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="prodModalIcon" style="width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:28px;background:var(--bg-secondary);border:1px solid var(--border-dark);flex-shrink:0;"></div>
+        <div>
+          <div style="font-size:20px;font-weight:800;color:var(--text-primary);" id="prodModalName"></div>
+          <div style="font-size:13px;color:var(--text-secondary);" id="prodModalMeta"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+    </div>
+    <div class="modal-info-grid" id="prodModalInfo"></div>
+    <div class="modal-desc" id="prodModalDesc"></div>
+    <div class="modal-products-title">Файлы продукта:</div>
+    <div id="prodModalFiles"></div>
+    <div id="prodModalMockups" style="margin-top:16px;"></div>
+    <div id="prodModalSEO" style="margin-top:16px;"></div>
+    <div id="prodModalPlatforms" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- Platform Modal -->
+<div class="modal-overlay" id="platformModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="platform-icon" id="modalIcon" style="width:56px;height:56px;font-size:28px;"></div>
+        <div>
+          <div style="font-size:20px;font-weight:800;" id="modalName"></div>
+          <div style="font-size:13px;color:var(--text-secondary);" id="modalCategory"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-info-grid" id="modalInfoGrid"></div>
+    <div class="modal-products-title">Продукты на этой площадке:</div>
+    <div id="modalProducts"></div>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+
+const platforms = [
+  // Cat A: Marketplaces
+  {id:1,name:"Etsy",icon:"🛍️",iconBg:"#F97316",cat:"А",catName:"Маркетплейс",audience:"96M+ покупателей",commission:"6.5% + $0.20",priority:"P0",status:"pending",
+   fit:5,fitReason:"Идеальная площадка #1 для цифровых продуктов. Огромная аудитория, ищущая трекеры, планеры, дашборды. Наш основной канал.",
+   desc:"Крупнейший маркетплейс для handmade и digital-продуктов. 96M+ активных покупателей. Цифровые продукты — один из самых быстрорастущих сегментов. SEO + Etsy Ads = основные драйверы трафика. Конверсия 1-3%.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:2,name:"Creative Market",icon:"🎨",iconBg:"#8B5CF6",cat:"А",catName:"Маркетплейс",audience:"Миллионы дизайнеров",commission:"30-50%",priority:"P0",status:"not-started",
+   fit:5,fitReason:"Премиум аудитория дизайнеров и креаторов. Наши шаблоны, дашборды и brand kits — прямое попадание в их запросы.",
+   desc:"Маркетплейс для цифровых активов: шрифты, графика, шаблоны, темы. Аудитория — профессиональные дизайнеры и бизнесы. Высокая комиссия, но качественный трафик и готовые покупатели.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:3,name:"Creative Fabrica",icon:"✂️",iconBg:"#EC4899",cat:"А",catName:"Маркетплейс",audience:"10.7M визитов/мес",commission:"25-50%",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Сильная аудитория для printables, Canva-шаблонов, SVG. Отличное дополнение к Etsy для тех же продуктов.",
+   desc:"Быстрорастущий маркетплейс для креативных ассетов. 10.7M визитов/мес. Особенно силён в printables, Canva-шаблонах и SVG. Подписная модель + маркетплейс.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:4,name:"Design Bundles",icon:"📦",iconBg:"#10B981",cat:"А",catName:"Маркетплейс",audience:"1.3M визитов, 9M pageviews",commission:"~30%",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Бандлы — наша сильная стратегия. Можно продавать наборы трекеров/планеров по выгодной цене.",
+   desc:"Маркетплейс для бандлов и отдельных дизайнерских продуктов. 1.3M уникальных визитов, 9M просмотров страниц. Сильный в Canva-шаблонах, printables и графике.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:5,name:"Envato",icon:"🌊",iconBg:"#06B6D4",cat:"А",catName:"Маркетплейс",audience:"Крупнейший digital assets",commission:"12.5-37.5%",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Крупнейший маркетплейс цифровых активов. Наши Excel/Sheets дашборды и бизнес-шаблоны отлично впишутся.",
+   desc:"GraphicRiver + ThemeForest + CodeCanyon. Крупнейший маркетплейс цифровых активов в мире. Excel-шаблоны, презентации, бизнес-документы — большой спрос.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:6,name:"TemplateMonster",icon:"👾",iconBg:"#7C3AED",cat:"А",catName:"Маркетплейс",audience:"Миллионы бизнесов",commission:"30-40%",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Больше ориентирован на веб-шаблоны, но есть ниша для бизнес-шаблонов и spreadsheets.",
+   desc:"Один из старейших маркетплейсов шаблонов. Миллионы разработчиков и бизнесов. Ниша для бизнес-шаблонов, презентаций, spreadsheets.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:7,name:"Teachers Pay Teachers",icon:"📚",iconBg:"#F59E0B",cat:"А",catName:"Маркетплейс",audience:"4M+ учителей",commission:"20-45%",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Образовательные трекеры и планеры для учителей — отдельная ниша с высокой лояльностью покупателей.",
+   desc:"4M+ зарегистрированных учителей. Образовательные worksheets, трекеры для класса, планеры для учителей. Высокая повторная покупка.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:8,name:"Amazon KDP",icon:"📖",iconBg:"#FF9900",cat:"А",catName:"Маркетплейс",audience:"Крупнейший книжный рынок",commission:"40-70% роялти",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Print-on-demand планеры, journals, workbooks. Минимальные доп. затраты для адаптации наших PDF-продуктов.",
+   desc:"Крупнейший книжный рынок мира. Планеры, journals, workbooks в формате print-on-demand. Ноль предоплаты за производство. Огромный organic трафик.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:9,name:"Fiverr",icon:"🎯",iconBg:"#1DBF73",cat:"А",catName:"Маркетплейс",audience:"Миллионы покупателей",commission:"20%",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Кастомные дашборды как услуга. Дополнительный канал для B2B-продаж и кастомизации.",
+   desc:"Маркетплейс фриланс-услуг. Можно продавать кастомные дашборды и шаблоны как gig. Миллионы покупателей ищут digital-решения.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:10,name:"Upwork",icon:"💼",iconBg:"#6FDA44",cat:"А",catName:"Маркетплейс",audience:"B2B фрилансеры",commission:"10-20%",priority:"P2",status:"not-started",
+   fit:2,fitReason:"Больше для кастомных услуг, чем для готовых продуктов. Хороший канал для B2B-заказов.",
+   desc:"Крупнейшая платформа для B2B фриланса. Кастомные spreadsheets, dashboard creation service. Высокие чеки, но требует времени на каждый проект.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+
+  // Cat Б: Niche
+  {id:11,name:"Notion Marketplace",icon:"📝",iconBg:"#000000",cat:"Б",catName:"Нишевый",audience:"Notion пользователи",commission:"Stripe fees",priority:"P0",status:"not-started",
+   fit:5,fitReason:"Notion-шаблоны (Life OS, бизнес-трекеры) — прямое попадание. Низкая комиссия, готовая аудитория.",
+   desc:"Официальный маркетплейс Notion. Только Stripe fees. Все наши Notion-шаблоны здесь. Растущая аудитория Notion-пользователей ищет готовые решения.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:12,name:"Prototion",icon:"🧩",iconBg:"#2D2D2D",cat:"Б",catName:"Нишевый",audience:"Notion community",commission:"Varies",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Дополнительная площадка для Notion-шаблонов. Активное сообщество.",
+   desc:"Специализированный маркетплейс Notion-шаблонов. Активное сообщество, хороший трафик. Дополняет Notion Marketplace.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:13,name:"Notionland",icon:"🗺️",iconBg:"#4A4A4A",cat:"Б",catName:"Нишевый",audience:"Notion растущий",commission:"Varies",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Растущая платформа. Третья точка продажи для Notion-шаблонов.",
+   desc:"Растущий маркетплейс Notion-шаблонов. Дополнительный канал дистрибуции при минимальных затратах на адаптацию.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:14,name:"Notion Everything",icon:"✨",iconBg:"#3F3F3F",cat:"Б",catName:"Нишевый",audience:"Notion OG marketplace",commission:"Varies",priority:"P2",status:"not-started",
+   fit:3,fitReason:"OG-маркетплейс Notion. Ещё одна точка дистрибуции.",
+   desc:"Один из первых маркетплейсов для Notion-шаблонов. Лояльная аудитория, хороший SEO. Четвёртая точка для Notion-продуктов.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:15,name:"Canva Creator",icon:"🎨",iconBg:"#00C4CC",cat:"Б",catName:"Нишевый",audience:"170M+ пользователей Canva",commission:"Revenue share",priority:"P0",status:"not-started",
+   fit:5,fitReason:"170M+ пользователей Canva! Наши Canva-шаблоны для соцсетей и brand kits — огромный потенциал.",
+   desc:"Canva Creator Program даёт доступ к 170M+ пользователей Canva. Revenue share модель. Canva-шаблоны для социальных сетей, brand kits, презентации.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:16,name:"Google Workspace",icon:"📊",iconBg:"#4285F4",cat:"Б",catName:"Нишевый",audience:"Google Sheets users",commission:"Custom",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Требует разработки add-on. Потенциал высок, но нужны dev-ресурсы.",
+   desc:"Google Workspace Marketplace для Sheets add-ons и dashboard generators. Требует разработки полноценного add-on. Огромный потенциал при реализации.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:17,name:"Microsoft AppSource",icon:"📈",iconBg:"#0078D4",cat:"Б",catName:"Нишевый",audience:"Excel/Office users",commission:"Varies",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Excel add-ons для корпоративных пользователей. Требует dev-работы.",
+   desc:"Маркетплейс Microsoft для Excel templates и add-ons. Корпоративная аудитория. Высокие чеки. Требует dev-ресурсов.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:18,name:"SpreadsheetsHub",icon:"📋",iconBg:"#34D399",cat:"Б",catName:"Нишевый",audience:"Spreadsheet users",commission:"Varies",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Специализированный маркетплейс spreadsheet-шаблонов. Прямое попадание в наш основной формат.",
+   desc:"Специализированный маркетплейс для spreadsheet templates. Budget templates, dashboards, trackers. Нишевая аудитория с высоким intent.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+
+  // Cat В: Creator
+  {id:19,name:"Gumroad",icon:"🚀",iconBg:"#FF90E8",cat:"В",catName:"Creator",audience:"Gumroad Discover",commission:"10% (снижается)",priority:"P0",status:"not-started",
+   fit:5,fitReason:"Самый простой старт. Встроенная аудитория Gumroad Discover. Минимальная комиссия.",
+   desc:"Самый простой способ начать продавать digital products. Бесплатный старт. 10% комиссия (снижается с объёмом). Встроенная аудитория через Gumroad Discover.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:20,name:"Payhip",icon:"💰",iconBg:"#5B5EA6",cat:"В",catName:"Creator",audience:"Creator ecosystem",commission:"0-5%",priority:"P0",status:"not-started",
+   fit:5,fitReason:"Дешевле Gumroad на Pro плане. Встроенная affiliate программа.",
+   desc:"Конкурент Gumroad с более низкой комиссией. 0-5% на Pro плане. Affiliate программа для привлечения продавцов.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:21,name:"Lemon Squeezy",icon:"🍋",iconBg:"#FDE047",cat:"В",catName:"Creator",audience:"Global creators",commission:"5% + $0.50",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Автоматический VAT для глобальных продаж. Удобно для международной торговли.",
+   desc:"Современная платформа для digital products. Автоматический VAT для глобальных продаж. 5% + $0.50 за транзакцию.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:22,name:"Sellfy",icon:"🏪",iconBg:"#3B82F6",cat:"В",catName:"Creator",audience:"Creators + POD",commission:"0% ($29-119/мес)",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Digital + POD в одном магазине. Хорошо для расширения в физические продукты.",
+   desc:"Digital + Print-on-demand в одном магазине. $29-$119/мес. 0% комиссия. Хорошо для объединения цифровых и физических продуктов.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:23,name:"Ko-fi",icon:"☕",iconBg:"#FF5E5B",cat:"В",catName:"Creator",audience:"Creator community",commission:"0% (Gold: $6/мес)",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Микроплатежи + магазин. Простой старт за $6/мес с 0% комиссией.",
+   desc:"Микроплатежи, tips, simple shop. Gold план за $6/мес даёт 0% комиссию. Подходит для digital products и community building.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:24,name:"Stan Store",icon:"🔗",iconBg:"#1E1E1E",cat:"В",catName:"Creator",audience:"Social media creators",commission:"0% ($29/мес)",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Link-in-bio магазин. Идеально если развиваем Instagram/TikTok.",
+   desc:"Link-in-bio магазин для creators. $29/мес, 0% комиссия. Идеально для продаж через Instagram и TikTok.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:25,name:"Whop",icon:"🎮",iconBg:"#6366F1",cat:"В",catName:"Creator",audience:"Membership platform",commission:"3% + processing",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Membership + digital products + community. Идеально для подписной модели.",
+   desc:"Membership + digital products + community в одном. 3% + processing. Растущая платформа с сильным community-фокусом.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+
+  // Cat Г: E-commerce
+  {id:26,name:"Shopify",icon:"🛒",iconBg:"#96BF48",cat:"Г",catName:"E-commerce",audience:"Полный контроль",commission:"$29-299/мес",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Полный контроль, свой бренд. Фаза 2 — когда будет трафик для своего магазина.",
+   desc:"Полный контроль над магазином. App ecosystem. $29-$299/мес. Идеально для построения собственного бренда. Фаза 2.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:27,name:"WooCommerce",icon:"🔧",iconBg:"#7B51B8",cat:"Г",catName:"E-commerce",audience:"WordPress users",commission:"~$10-30/мес хостинг",priority:"P2",status:"not-started",
+   fit:2,fitReason:"WordPress-based. 0% комиссии, но требует техподдержки.",
+   desc:"WordPress + Easy Digital Downloads. $10-30/мес хостинг. 0% комиссии. Полный контроль, но требует техподдержки.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:28,name:"Squarespace",icon:"⬛",iconBg:"#111111",cat:"Г",catName:"E-commerce",audience:"Design-focused",commission:"$27-49/мес",priority:"P3",status:"not-started",
+   fit:2,fitReason:"Красивый дизайн, но не лучший для digital products.",
+   desc:"Красивый дизайн. $27-$49/мес. Больше подходит для портфолио и physical goods. Не приоритет для digital products.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+
+  // Cat Д: Courses & Membership
+  {id:29,name:"Teachable",icon:"🎓",iconBg:"#F97316",cat:"Д",catName:"Курсы",audience:"Course creators",commission:"$39-199/мес",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Идеально для курсов по Excel/Sheets/Notion. Поток дохода #4.",
+   desc:"Платформа для курсов + coaching. $39-$199/мес. Идеально для курсов 'Как создать дашборд', 'Excel для бизнеса' и т.д.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:30,name:"Thinkific",icon:"💡",iconBg:"#0CC0DF",cat:"Д",catName:"Курсы",audience:"Course + community",commission:"$0-149/мес",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Курсы + community. Альтернатива Teachable.",
+   desc:"Курсы + community. $0-$149/мес. Free план для старта. Хорошая альтернатива Teachable.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:31,name:"Podia",icon:"🎪",iconBg:"#6C5CE7",cat:"Д",catName:"Курсы",audience:"All-in-one",commission:"$39-89/мес",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Всё-в-одном: курсы + downloads + membership. Удобно для объединения.",
+   desc:"Всё-в-одном: курсы + digital downloads + membership. $39-$89/мес. Хорошо для объединения нескольких потоков.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:32,name:"Skool",icon:"🏫",iconBg:"#0EA5E9",cat:"Д",catName:"Курсы",audience:"Community-first",commission:"$99/мес",priority:"P2",status:"not-started",
+   fit:3,fitReason:"Community-first подход. Фаза 3 — когда будет аудитория.",
+   desc:"Community-first, курсы как дополнение. $99/мес. Сильный для построения community вокруг бренда. Фаза 3.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:33,name:"Kajabi",icon:"🏢",iconBg:"#E11D48",cat:"Д",catName:"Курсы",audience:"Enterprise",commission:"$149-399/мес",priority:"P3",status:"not-started",
+   fit:2,fitReason:"Enterprise-grade. Дорого для старта, но мощно при масштабе.",
+   desc:"Enterprise-grade: email + курсы + community + automations. $149-$399/мес. Для масштабирования после достижения стабильного дохода.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+
+  // Cat Е: Deal platforms
+  {id:34,name:"AppSumo",icon:"🍕",iconBg:"#FF6633",cat:"Е",catName:"Deal-платформа",audience:"B2B трафик",commission:"Lifetime deals",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Огромный B2B трафик. Идеально для launch SaaS-продукта (Фаза 3).",
+   desc:"Огромный B2B трафик. Lifetime deals модель. Идеально для launch SaaS или membership продукта. Можно получить тысячи пользователей за один launch.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:35,name:"Product Hunt",icon:"🐱",iconBg:"#DA552F",cat:"Е",catName:"Deal-платформа",audience:"Tech аудитория",commission:"Free launch",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Бесплатный launch с PR-эффектом. Идеально для SaaS и tools.",
+   desc:"Tech-аудитория. Бесплатный launch с огромным PR-эффектом. Идеально для SaaS dashboard builder или AI tools launch.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:36,name:"ClickBank",icon:"🏦",iconBg:"#009E60",cat:"Е",catName:"Deal-платформа",audience:"100K+ аффилиатов",commission:"Affiliate marketplace",priority:"P2",status:"not-started",
+   fit:3,fitReason:"100K+ аффилиатов продвигают твой продукт. Хорошо для курсов и digital products.",
+   desc:"Affiliate marketplace с 100K+ аффилиатов. Они продвигают твой продукт за комиссию. Хорошо для курсов и digital products.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+
+  // Cat Ж: Content
+  {id:37,name:"YouTube",icon:"▶️",iconBg:"#FF0000",cat:"Ж",catName:"Контент",audience:"2B+ пользователей",commission:"Ad revenue + sponsors",priority:"P1",status:"not-started",
+   fit:4,fitReason:"Трафик-машина для всех площадок. Обзоры продуктов, туториалы, tips.",
+   desc:"Ad revenue + sponsors + affiliate. $10-50K/мес при 100K+ подписчиков. Обзоры шаблонов, туториалы по Excel/Notion — органический трафик на все площадки.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+  {id:38,name:"Pinterest",icon:"📌",iconBg:"#E60023",cat:"Ж",catName:"Контент",audience:"450M+ пользователей",commission:"Бесплатный трафик",priority:"P0",status:"not-started",
+   fit:5,fitReason:"#1 источник бесплатного трафика для digital products. Визуальный поиск = идеально для наших продуктов.",
+   desc:"#1 для digital products — бесплатный organic трафик. 450M+ пользователей. Визуальный поиск. Пины живут месяцами. Направляет трафик на Etsy, Gumroad и свой магазин.",
+   products:[], revenue:0, sales:0, views:0, conversion:0},
+];
+
+const products = [
+  // === ГОТОВЫЕ ПРОДУКТЫ (файлы созданы) ===
+  {id:1,name:"Finance Hub — Ultimate",cat:"Финансы",format:"HTML Interactive",price:0,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   driveUrl:"",
+   files:[
+     {name:"FinanceHub_Ultimate.html",type:"product",icon:"📊"},
+     {name:"FinanceHub_DarkMode.html",type:"product",icon:"🌙"},
+     {name:"FinanceHub_Setup_Guide.pdf",type:"guide",icon:"📖"},
+     {name:"FinanceHub_Preview.gif",type:"preview",icon:"🎬"},
+     {name:"FinanceHub_Preview_Small.gif",type:"preview",icon:"🎬"},
+   ],
+   mockups:["Mockup_1_Hero.png","Mockup_2_Features.png","Mockup_3_Portfolio.png","Mockup_4_Gamification.png","Mockup_5_WhatsIncluded.png"],
+   listing:"Etsy_Listing_SEO.md",
+   desc:"Премиум интерактивный финансовый дашборд. Dashboard & Analytics, Budget, Investments, Debt, Net Worth, Savings Goals, Gamification. 2 дизайн-варианта (Ultimate + DarkMode). Гайд + превью GIF + 5 мокапов + SEO-листинг готов."
+  },
+  {id:2,name:"Small Business Tracker 2026",cat:"Бизнес",format:"Excel (.xlsx)",price:24.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Small_Business_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Small_Business_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Small_Business_Tracker_SEO.md",
+   desc:"Трекер для малого бизнеса: доходы, расходы, прибыль, маржа, налоги. 6 KPI-карточек на Dashboard, помесячная таблица, 2 графика. Dark navy premium дизайн. 394 формулы, 0 ошибок. SEO-листинг для Etsy/Gumroad/Creative Market готов."
+  },
+  {id:3,name:"Sports Betting Tracker 2026",cat:"Спорт",format:"Excel (.xlsx)",price:24.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Sports_Betting_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Sports_Betting_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Sports_Betting_Tracker_SEO.md",
+   desc:"Трекер ставок: Dashboard (8 KPI), Bet Log, Sport Analysis, Bankroll Management, Settings с конвертером odds. 6 вкладок, 561 формула, 0 ошибок. SEO-листинг для Etsy/Gumroad/Creative Market готов."
+  },
+  // === ДИЗАЙН-ВАРИАНТЫ (прототипы) ===
+  {id:4,name:"Design Concept — DarkMode",cat:"Дизайн",format:"HTML",price:0,status:"draft",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Design1_DarkMode.html",type:"prototype",icon:"🌙"}],
+   mockups:[],listing:"",
+   desc:"Прототип дизайна в тёмной теме. Используется как база для продуктов."
+  },
+  {id:5,name:"Design Concept — Light Clean",cat:"Дизайн",format:"HTML",price:0,status:"draft",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Design2_LightClean.html",type:"prototype",icon:"☀️"}],
+   mockups:[],listing:"",
+   desc:"Прототип дизайна в светлой теме."
+  },
+  {id:6,name:"Design Concept — Glassmorphism",cat:"Дизайн",format:"HTML",price:0,status:"draft",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Design3_Glassmorphism.html",type:"prototype",icon:"🔮"}],
+   mockups:[],listing:"",
+   desc:"Прототип дизайна в стиле glassmorphism."
+  },
+  // === ЗАПЛАНИРОВАННЫЕ ПРОДУКТЫ (из 15 Launch Briefs) ===
+  {id:7,name:"Ultimate Budget Dashboard 2026",cat:"Финансы",format:"Excel (.xlsx)",price:24.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Ultimate_Budget_Dashboard_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Ultimate_Budget_Dashboard_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Флагманский бюджетный дашборд: 7 вкладок (Dashboard, Income, Expenses, Budget vs Actual, Savings Goals, Annual Summary, Settings). 253 формулы, 6 KPI, графики доходов/расходов, трекер целей накоплений. Navy+gold premium дизайн."
+  },
+  {id:8,name:"Debt Payoff Tracker & Calculator",cat:"Финансы",format:"Excel (.xlsx)",price:9.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Debt_Payoff_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Debt_Payoff_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Debt_Payoff_Tracker_SEO.md",
+   desc:"Snowball vs Avalanche калькулятор, 4 демо-долга ($47,500), Dashboard с KPI, Monthly Tracker на 12 мес, налоговый калькулятор. 6 вкладок, 1,651 формул, navy+gold дизайн."
+  },
+  {id:9,name:"Freelancer Income Tracker",cat:"Бизнес",format:"Excel (.xlsx)",price:14.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Freelancer_Income_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Freelancer_Income_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Freelancer_Income_Tracker_SEO.md",
+   desc:"Трекер доходов фрилансера: 6 KPI на Dashboard, Income Log (15 записей), Expense Log (20 записей), Tax Calculator (US brackets + SE tax), Client Tracker (8 клиентов). 203 формулы, navy+gold дизайн."
+  },
+  {id:10,name:"Digital Planner 2026",cat:"Планер",format:"Excel (.xlsx)",price:14.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad","Creative Market"],sales:0,revenue:0,views:0,
+   files:[{name:"Digital_Planner_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Digital_Planner_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Digital_Planner_SEO.md",
+   desc:"Премиум цифровой планер 2026: 15 вкладок (Dashboard, Yearly Goals, Monthly/Weekly Planner, Daily Habits 15×365, Budget 15 категорий×12 мес, Fitness, Meal Planner, Mood Journal, Reading Log, Projects, Savings Goals, Travel, Contacts, How to Use). 306 формул, 0 ошибок. Navy+Gold дизайн. Конкурирует с 400-900 стр. Etsy бестселлерами."
+  },
+  {id:11,name:"Instagram Content Toolkit 50+",cat:"Маркетинг",format:"Excel (.xlsx)",price:19.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad","Creative Market"],sales:0,revenue:0,views:0,
+   files:[{name:"Instagram_Templates_50_Pack.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Instagram_Templates_50_Pack_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Instagram_Toolkit_SEO.md",
+   desc:"Полный Instagram бизнес-тулкит: 12 вкладок — Dashboard с KPI, Content Calendar 365 дней, 45 Post Templates по 7 категориям, Hashtag Strategy (500+ хэштегов, 20 наборов), Analytics Tracker 52 недели, Caption Bank 100 заготовок, Competitor Analysis 10 конкурентов, Brand Guidelines, Growth Strategy, Reel Ideas Bank 30+, Stories Planner. 653 формулы, 0 ошибок. Luxury Neutral дизайн (тёплые коричневые/кремовые тона)."
+  },
+  {id:12,name:"Life OS Dashboard 2026",cat:"Продуктивность",format:"Excel (.xlsx)",price:29.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad","Creative Market"],sales:0,revenue:0,views:0,
+   files:[{name:"Notion_Life_OS_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Notion_Life_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Notion_Life_OS_SEO.md",
+   desc:"Ультимативная Life Operating System: 15 вкладок — Life Dashboard (6 KPI Life/Health/Wealth/Growth/Relationships/Career Score), Vision Board & Goals (8 направлений, 1/3/5-летние цели), Quarterly OKRs, Daily Planner 365 дней, Habit Tracker Pro 20 привычек×365 дней со стриками, Finance Hub (доходы/расходы/бюджет/net worth), Health & Wellness (BMI, тренировки, питание), Relationships CRM, Projects & Tasks, Learning & Growth, Subscriptions Manager, Bucket List, Weekly Review 52 нед, Annual Review. 1,321 формул, 0 ошибок. Dark Elegance дизайн (золото на тёмном)."
+  },
+  {id:13,name:"500+ AI Prompt Pack",cat:"AI",format:"Markdown / PDF",price:12.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"AI_Prompt_Pack_500.md",type:"product",icon:"🤖"}],
+   mockups:[],listing:"AI_Prompt_Pack_SEO.md",
+   desc:"500+ AI промптов для бизнеса: 10 категорий (маркетинг, продажи, копирайтинг, SEO, соцсети, аналитика, финансы, HR, стратегия, продуктивность). 50 промптов на категорию с переменными для кастомизации."
+  },
+  {id:14,name:"Habit Tracker",cat:"Продуктивность",format:"Excel (.xlsx)",price:7.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Habit_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Habit_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Habit_Tracker_SEO.md",
+   desc:"10 привычек x 31 день, Daily Tracker с условным форматированием (✓/X), Weekly Review, Monthly Summary, Habit Library (25 идей по 5 категориям). 55 формул, navy+gold дизайн."
+  },
+  {id:15,name:"KPI Dashboard 2026",cat:"Бизнес",format:"Excel (.xlsx)",price:19.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"KPI_Dashboard_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/KPI_Dashboard_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"KPI-дашборд для бизнеса: Dashboard с 6 KPI, Goals Tracker (SMART-цели, прогресс-бары), Team Performance (5 сотрудников, рейтинги), Monthly Data (12 месяцев), Settings. 6 вкладок, 330 формул, navy+gold дизайн."
+  },
+  {id:16,name:"Social Media Calendar 2026",cat:"Маркетинг",format:"Excel (.xlsx)",price:9.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Social_Media_Calendar_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Social_Media_Calendar_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Контент-календарь для соцсетей: Dashboard (6 KPI, 2 графика), Monthly Planner (31 день, 6 платформ), Content Library (50 идей), Hashtag Library (200 хэштегов), Analytics (12 месяцев, ROI). 6 вкладок, 291 формула, navy+gold дизайн."
+  },
+  {id:17,name:"Wedding Budget Planner 2026",cat:"Свадьба",format:"Excel (.xlsx)",price:14.99,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Wedding_Budget_Planner_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Wedding_Budget_Planner_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Свадебный бюджет-планер: Dashboard (6 KPI, 2 графика, $35K демо), Budget Tracker (13 категорий, 50+ позиций), Guest List (100 гостей, RSVP, meal, table), Vendor Tracker (15 вендоров), Timeline (12 мес). 7 вкладок, 207 формул, navy+gold дизайн."
+  },
+  // === НОВЫЕ ПРОДУКТЫ (сессия 2) ===
+  {id:19,name:"Subscription Manager 2026",cat:"Финансы",format:"Excel (.xlsx)",price:9.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Subscription_Manager_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Subscription_Manager_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Subscription_Manager_SEO.md",
+   desc:"Менеджер подписок: 6 вкладок (Dashboard, Subscriptions, Settings, How to Use, Renewals Calendar, Savings Analysis). Трекер всех подписок с автоматическим расчётом экономии и предупреждениями о продлениях. 105 формул, 0 ошибок. Navy+Gold дизайн."
+  },
+  {id:20,name:"Savings Goal Tracker 2026",cat:"Финансы",format:"Excel (.xlsx)",price:11.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Savings_Goal_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Savings_Goal_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Savings_Goal_Tracker_SEO.md",
+   desc:"Трекер целей накоплений: 6 вкладок (Dashboard, Goals, Deposits, Monthly Summary, Projections, How to Use). 6 демо-целей, 20 записей депозитов, прогнозы достижения целей. 1,185 формул, 0 ошибок. Navy+Gold дизайн."
+  },
+  {id:21,name:"Investment Portfolio Tracker 2026",cat:"Финансы",format:"Excel (.xlsx)",price:24.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad","Creative Market"],sales:0,revenue:0,views:0,
+   files:[{name:"Investment_Portfolio_Tracker_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Investment_Portfolio_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Investment_Portfolio_SEO.md",
+   desc:"Трекер инвестиционного портфеля: 7 вкладок (Dashboard, Holdings 15 активов, Transactions, Dividends, Performance, Rebalancing, How to Use). Акции, ETF, крипто. 220 формул, 0 ошибок. Navy+Gold дизайн."
+  },
+  {id:22,name:"Meal Planner & Grocery Budget 2026",cat:"Здоровье",format:"Excel (.xlsx)",price:9.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Meal_Planner_Grocery_Budget_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Meal_Planner_Grocery_Budget_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Meal_Planner_SEO.md",
+   desc:"Планер питания и продуктовый бюджет: 7 вкладок (Dashboard, Weekly Planner, Grocery List, Expense Log, Recipes, Settings, How to Use). Полное планирование меню на неделю + трекер расходов на продукты. 114 формул, 0 ошибок. Navy+Gold дизайн."
+  },
+  {id:23,name:"Student Budget Planner 2026",cat:"Финансы",format:"Excel (.xlsx)",price:9.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Student_Budget_Planner_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Student_Budget_Planner_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"Student_Budget_SEO.md",
+   desc:"Бюджет-планер для студентов: 7 вкладок (Dashboard, Income, Expenses, Semester Budget, Loan Tracker, Settings, How to Use). Семестровый бюджет, трекер стипендий/подработок, калькулятор кредитов на обучение. 133 формулы, 0 ошибок. Navy+Gold дизайн."
+  },
+  // === НОВЫЕ НИШЕВЫЕ ПРОДУКТЫ (7 шт.) ===
+  {id:24,name:"Construction Contractor OS",cat:"Бизнес",format:"Excel (.xlsx)",price:129,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Construction_Contractor_OS.xlsx",type:"product",icon:"🏗"},{name:"GoogleSheets/Construction_Contractor_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"Construction_Contractor_SEO.md",type:"seo",icon:"📄"},{name:"Construction_Contractor_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"Construction_Contractor_SEO.md",
+   desc:"Construction Contractor OS: полная операционная система для подрядчиков. 16 вкладок, 376 формул. Управление проектами, сметы, расходы, клиенты, график, платежи. Navy+Gold дизайн."
+  },
+  {id:25,name:"Airbnb Host OS",cat:"Бизнес",format:"Excel (.xlsx)",price:89,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Airbnb_Host_OS.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Airbnb_Host_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"Airbnb_Host_SEO.md",type:"seo",icon:"📄"},{name:"Airbnb_Host_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"Airbnb_Host_SEO.md",
+   desc:"Airbnb Host OS: полный манеджер для хостов Airbnb. 15 вкладок, 269 формул. Бронирования, доход, расходы, гостевые отзывы, график занятости, финансовая аналитика. Navy+Gold дизайн."
+  },
+  {id:26,name:"Rental Property OS",cat:"Недвижимость",format:"Excel (.xlsx)",price:89,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Rental_Property_OS.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Rental_Property_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"Rental_Property_SEO.md",type:"seo",icon:"📄"},{name:"Rental_Property_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"Rental_Property_SEO.md",
+   desc:"Rental Property OS: система управления арендной недвижимостью. 16 вкладок, 468 формул. Арендаторы, договоры, платежи, техническое обслуживание, расходы, налоги, отчёты. Navy+Gold дизайн."
+  },
+  {id:27,name:"Etsy Seller OS",cat:"E-commerce",format:"Excel (.xlsx)",price:79,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Etsy_Seller_OS.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Etsy_Seller_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"Etsy_Seller_SEO.md",type:"seo",icon:"📄"},{name:"Etsy_Seller_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"Etsy_Seller_SEO.md",
+   desc:"Etsy Seller OS: полная операционная система для продавцов Etsy. 18 вкладок, 843 формулы. Листинги, продажи, трафик, расходы, SEO-отслеживание, аналитика конкурентов, планирование кампаний. Navy+Gold дизайн."
+  },
+  {id:28,name:"Vet/Dental Clinic OS",cat:"Здравоохранение",format:"Excel (.xlsx)",price:129,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Vet_Dental_Clinic_OS.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/VetDental_Clinic_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"Vet_Dental_Clinic_SEO.md",type:"seo",icon:"📄"},{name:"Vet_Dental_Clinic_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"Vet_Dental_Clinic_SEO.md",
+   desc:"Vet/Dental Clinic OS: система управления клиникой. 16 вкладок, 245 формул. Пациенты, назначения, счета, процедуры, персонал, инвентарь, отчёты о прибыльности. Navy+Gold дизайн."
+  },
+  {id:29,name:"Farm Business OS",cat:"Сельское хозяйство",format:"Excel (.xlsx)",price:69,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Farm_Business_OS.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Farm_Business_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"Farm_Business_SEO.md",type:"seo",icon:"📄"},{name:"Farm_Business_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"Farm_Business_SEO.md",
+   desc:"Farm Business OS: операционная система для фермерского бизнеса. 15 вкладок, 266 формул. Посевной календарь, урожай, расходы, поголовье, оборудование, продажи, финансовая аналитика. Navy+Gold дизайн."
+  },
+  {id:30,name:"SOC2/GDPR Compliance Kit",cat:"Соответствие",format:"Excel (.xlsx)",price:149,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"SOC2_GDPR_Compliance_Kit.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Compliance_Toolkit_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"},{name:"SOC2_GDPR_Compliance_SEO.md",type:"seo",icon:"📄"},{name:"SOC2_GDPR_Compliance_Mockups.zip",type:"mockup",icon:"🖼"}],
+   mockups:[],listing:"SOC2_GDPR_Compliance_SEO.md",
+   desc:"SOC2/GDPR Compliance Kit: полный набор инструментов для соответствия нормам. 20 вкладок, 380 формул. Матрица требований, аудит-чеклист, регистр рисков, план действий, отчёты, документация. Navy+Gold дизайн."
+  },
+  // === БЕСПЛАТНЫЙ ЛИД-МАГНИТ ===
+  {id:18,name:"Free Monthly Budget (Lead Magnet)",cat:"Финансы",format:"Excel (.xlsx)",price:0,status:"ready",driveUrl:"",platforms:[],sales:0,revenue:0,views:0,
+   files:[{name:"Free_Monthly_Budget_2026.xlsx",type:"product",icon:"📊"},{name:"GoogleSheets/Free_Monthly_Budget_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Бесплатный месячный бюджет для лидогенерации. Dashboard (4 KPI), Income/Expenses таблицы, вкладка Upsell с ссылками на премиум продукты. 26 формул, navy+gold дизайн."
+  },
+  // === БАНДЛЫ ===
+  {id:31,name:"Personal Finance Starter Kit (Bundle)",cat:"Бандл",format:"ZIP (3 xlsx)",price:24.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Personal_Finance_Starter_Kit.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Personal_Finance_Starter_Kit.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Personal_Finance_Starter_Kit.png"],listing:"Bundle_Listings_Tier1_Tier2_SEO.md",
+   desc:"Бандл Entry Tier: Ultimate Budget Dashboard + Debt Payoff Tracker + Savings Goal Tracker. 3 продукта, 3,089 формул. Индивидуальная стоимость $54.97 → бандл $29.99 (скидка 45%). Целевая аудитория: молодые взрослые, первый бюджет."
+  },
+  {id:32,name:"Social Media Boss Kit (Bundle)",cat:"Бандл",format:"ZIP (2 xlsx + 1 pdf)",price:24.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Social_Media_Boss_Kit.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Social_Media_Boss_Kit.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Social_Media_Boss_Kit.png"],listing:"Bundle_Listings_Tier1_Tier2_SEO.md",
+   desc:"Бандл Entry Tier: Instagram Content Toolkit + Social Media Calendar + 500+ AI Prompt Pack. 3 продукта, 944 формулы + 500 AI промптов. Индивидуальная стоимость $52.97 → бандл $29.99 (скидка 43%). Целевая аудитория: контент-криэйторы, SMM."
+  },
+  {id:33,name:"Small Business Command Center (Bundle)",cat:"Бандл",format:"ZIP (4 xlsx)",price:39.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Small_Business_Command_Center.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Small_Business_Command_Center.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Small_Business_Command_Center.png"],listing:"Bundle_Listings_Tier1_Tier2_SEO.md",
+   desc:"Бандл Core Tier: Small Business Tracker + KPI Dashboard + Freelancer Income + Social Media Calendar. 4 продукта, 1,218 формул. Индивидуальная стоимость $84.96 → бандл $49.99 (скидка 41%). Целевая аудитория: фрилансеры, малый бизнес."
+  },
+  {id:34,name:"Complete Finance Bundle",cat:"Бандл",format:"ZIP (5 xlsx)",price:39.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Complete_Finance_Bundle.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Complete_Finance_Bundle.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Complete_Finance_Bundle.png"],listing:"Bundle_Listings_Tier1_Tier2_SEO.md",
+   desc:"Бандл Core Tier: Ultimate Budget + Debt Payoff + Savings Goal + Investment Portfolio + Subscription Manager. 5 продуктов, 3,414 формул. Индивидуальная стоимость $94.95 → бандл $49.99 (скидка 47%). Целевая аудитория: серьёзные финансисты."
+  },
+  {id:35,name:"Life OS Mega Bundle",cat:"Бандл",format:"ZIP (5 xlsx)",price:49.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Life_OS_Mega_Bundle.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Life_OS_Mega_Bundle.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Life_OS_Mega_Bundle.png"],listing:"Bundle_Listings_Tier3_Tier4_SEO.md",
+   desc:"Бандл Premium Tier: Notion Life OS + Digital Planner + Habit Tracker + Meal Planner + Ultimate Budget. 5 продуктов, 2,049 формул. Индивидуальная стоимость $97.95 → бандл $59.99 (скидка 39%). Целевая аудитория: продуктивность, лайф-оптимизация."
+  },
+  {id:36,name:"Entrepreneur Ultimate Bundle",cat:"Бандл",format:"ZIP (6 xlsx + 1 pdf)",price:59.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Entrepreneur_Ultimate_Bundle.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Entrepreneur_Ultimate_Bundle.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Entrepreneur_Ultimate_Bundle.png"],listing:"Bundle_Listings_Tier3_Tier4_SEO.md",
+   desc:"Бандл Premium Tier: Small Business Tracker + KPI Dashboard + Freelancer Income + Instagram Toolkit + Social Media Calendar + AI Prompt Pack + Ultimate Budget. 7 продуктов, 2,124 формулы + 500 AI промптов. Индивидуальная стоимость $147.93 → бандл $79.99 (скидка 46%)."
+  },
+  {id:37,name:"PlanCraft COMPLETE Collection (Bundle)",cat:"Бандл",format:"ZIP (17 xlsx + 1 pdf)",price:79.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_COMPLETE_Collection.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_COMPLETE_Collection.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_COMPLETE_Collection.png"],listing:"Bundle_Listings_Tier3_Tier4_SEO.md",
+   desc:"Бандл Mega Tier: ВСЕ 18 стандартных продуктов в одном ZIP. 6,500+ формул. Индивидуальная стоимость $360.82 → бандл $99.99 (скидка 72%). BEST VALUE. Целевая аудитория: power users, подарки."
+  },
+  {id:38,name:"Real Estate Empire Kit (Bundle)",cat:"Бандл",format:"ZIP (2 xlsx)",price:149.99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Bundles/PlanCraft_Real_Estate_Empire_Kit.zip",type:"bundle",icon:"📦"},{name:"Bundles/Bundle_Mockup_Real_Estate_Empire_Kit.png",type:"mockup",icon:"🖼"}],
+   mockups:["Bundle_Mockup_Real_Estate_Empire_Kit.png"],listing:"Bundle_Listings_Tier3_Tier4_SEO.md",
+   desc:"Бандл Mega Tier: Airbnb Host OS + Rental Property OS. 2 нишевых продукта, 737 формул, 31 вкладка. Индивидуальная стоимость $258 → бандл $149.99 (скидка 42%). Целевая аудитория: инвесторы в недвижимость, арендодатели."
+  },
+,
+  // === PHASE 1: NEW PRODUCTS (April 2026) ===
+  {id:38,name:"Restaurant & Cafe Business OS",cat:"Ресторан",format:"Excel (.xlsx)",price:129,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Restaurant_Cafe_OS_2026.xlsx",type:"product",icon:"🍽️"},{name:"GoogleSheets/Restaurant_Cafe_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Полная операционная система для ресторанов и кафе. 16 вкладок, 569 формул. Dashboard, Daily Sales, Menu & Recipe Costing (30 блюд, food cost %), Inventory с авто-алертами, Staff Scheduling с labor cost %, Monthly P&L, Vendor Management, Tip Distribution, Break-Even Analysis, Cash Flow Forecast, Menu Engineering Matrix (Star/Plowhorse/Puzzle/Dog). Демо: Olive & Vine Mediterranean Kitchen. Navy+Gold дизайн."
+  },
+  {id:39,name:"Salon & Spa Business OS",cat:"Салон",format:"Excel (.xlsx)",price:99,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Salon_Spa_OS_2026.xlsx",type:"product",icon:"💇"},{name:"GoogleSheets/Salon_Spa_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Операционная система для салонов красоты и спа. 12 вкладок, 333 формулы. Service Menu (24 услуги), Staff & Commissions (4 типа оплаты), Appointments, Retail Products, Monthly P&L, Marketing ROI, Loyalty Program (auto-tier Bronze/Silver/Gold/Diamond), Client Retention. Демо: Luxe Glow Beauty Studio. Navy+Gold."
+  },
+  {id:40,name:"Home Renovation Budget Tracker",cat:"Ремонт",format:"Excel (.xlsx)",price:29,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Home_Renovation_Tracker_2026.xlsx",type:"product",icon:"🏠"},{name:"GoogleSheets/Home_Renovation_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Трекер бюджета ремонта. 10 вкладок, 141 формула. Room-by-Room Budget (20 комнат), Contractor Bids (сравнение 3-5 предложений), Materials & Shopping List, Project Timeline, Change Orders, Payment Schedule, ROI Estimator. Демо: Victorian Home, Portland $185K. Navy+Gold."
+  },
+  {id:41,name:"Self-Employed Tax Prep (Schedule C)",cat:"Налоги",format:"Excel (.xlsx)",price:29,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Self_Employed_Tax_Prep_2026.xlsx",type:"product",icon:"📋"},{name:"GoogleSheets/Self_Employed_Tax_Prep_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Налоговый трекер для самозанятых (Schedule C). 9 вкладок, 118 формул. Income Tracker, Expenses по всем 14 линиям IRS, Mileage Log ($0.70/mile), Home Office Calculator (Simplified vs Actual), Quarterly Estimates с tax brackets, 1099 Reconciliation. Демо: Rivera Digital Consulting. Navy+Gold."
+  },
+  // === PHASE 2: NEW PRODUCTS ===
+  {id:42,name:"Content Creator Revenue Hub",cat:"Креатор",format:"Excel (.xlsx)",price:49,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Content_Creator_Revenue_Hub_2026.xlsx",type:"product",icon:"🎬"},{name:"GoogleSheets/Content_Creator_Revenue_Hub_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Хаб доходов для контент-криэйторов. 10 вкладок, 177 формул. Multi-Platform Revenue Tracker (YouTube, Sponsorships, Affiliate, Products, Membership), Sponsorship Pipeline, Rate Card Calculator (авто-расчёт ставок по CPM), Content Performance, Monthly P&L, Media Kit Stats, Expenses. Демо: MayaCreates 245K YouTube. Navy+Gold."
+  },
+  {id:43,name:"Agency & Freelancer Client OS",cat:"Агентство",format:"Excel (.xlsx)",price:69,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Agency_Client_OS_2026.xlsx",type:"product",icon:"🏢"},{name:"GoogleSheets/Agency_Client_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"CRM и управление клиентами для агентств и фрилансеров. 9 вкладок, 151 формула. Client Pipeline (weighted), Projects, Time Tracking (utilization rate), Invoices, MRR Dashboard (recurring revenue), Monthly P&L. Демо: Spark Digital Agency. Navy+Gold."
+  },
+  {id:44,name:"E-Commerce Multi-Platform Seller OS",cat:"E-commerce",format:"Excel (.xlsx)",price:79,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Ecommerce_MultiPlatform_OS_2026.xlsx",type:"product",icon:"🛒"},{name:"GoogleSheets/Ecommerce_MultiPlatform_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Мульти-платформенная система для e-commerce продавцов. 10 вкладок, 355 формул. Unified Sales Tracker (Etsy/Amazon/Shopify/eBay/TikTok Shop), Product Catalog с margins, Platform Comparison, Product Performance, Monthly P&L, Ad Spend & ROAS, Shipping Tracker. Демо: Maple & Co Handmade. Navy+Gold."
+  },
+  {id:45,name:"Fitness & Macro Meal Prep Planner",cat:"Фитнес",format:"Excel (.xlsx)",price:19,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Fitness_Meal_Prep_Planner_2026.xlsx",type:"product",icon:"💪"},{name:"GoogleSheets/Fitness_Meal_Prep_Planner_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Фитнес-планер с макро-трекером. 7 вкладок, 62 формулы. Auto-TDEE/BMR калькулятор, Recipe Database (30 рецептов), Daily Tracker (калории, макросы, вода, сон), Body Measurements (12 нед), Workout Log. Демо: Alex Rivera, lose fat goal. Navy+Gold."
+  },
+  // === PHASE 3 ===
+  {id:46,name:"Law Firm Billing Tracker",cat:"Юриспруденция",format:"Excel (.xlsx)",price:79,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Law_Firm_Billing_Tracker_2026.xlsx",type:"product",icon:"⚖️"},{name:"GoogleSheets/Law_Firm_Billing_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Биллинг-трекер для юридических фирм. 8 вкладок, 108 формул. Time Entries (0.1 increments), Client & Matter Tracker, Billing/Invoices, Trust Account (IOLTA) с running balance, Attorney Performance (utilization, revenue, targets). Демо: Rivera & Associates, 3 юриста. Navy+Gold."
+  },
+  {id:47,name:"Real Estate Agent CRM",cat:"Недвижимость",format:"Excel (.xlsx)",price:49,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Real_Estate_Agent_CRM_2026.xlsx",type:"product",icon:"🏡"},{name:"GoogleSheets/Real_Estate_Agent_CRM_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"CRM для риэлторов. 7 вкладок, 79 формул. Listings (12 объектов), Lead Pipeline (weighted), Commission Tracker (split calculation), Annual Goals (monthly targets vs actual). Демо: Sarah Chen Realty, Newport Beach. Navy+Gold."
+  },
+  {id:48,name:"Personal Finance Dashboard 2027",cat:"Финансы",format:"Excel (.xlsx)",price:19,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Personal_Finance_Dashboard_2027.xlsx",type:"product",icon:"💰"},{name:"GoogleSheets/Personal_Finance_Dashboard_2027_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Персональный финансовый дашборд 2027. 7 вкладок, 75 формул. Income/Expense Tracker, Budget vs Actual (50/30/20 rule), Net Worth Calculator (Assets vs Liabilities), 30 демо-расходов, 20 категорий. Демо: Taylor & Morgan Rivera household. Navy+Gold."
+  },
+  {id:49,name:"Wedding Planning Complete OS",cat:"Свадьба",format:"Excel (.xlsx)",price:39,status:"ready",driveUrl:"",platforms:["Etsy","Gumroad"],sales:0,revenue:0,views:0,
+   files:[{name:"Wedding_Planning_Complete_OS_2026.xlsx",type:"product",icon:"💒"},{name:"GoogleSheets/Wedding_Planning_Complete_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Полная система планирования свадьбы. 10 вкладок, 82 формулы. Budget (15 категорий), Guest List (50 гостей, RSVP, meals, tables), Vendor Tracker, 12-Month Timeline (40 задач), Seating Chart, Gift Registry, Wedding Party. Демо: Emma & James, June 2027, $45K. Navy+Gold."
+  },
+  // === MICRO NICHES ===
+  {id:50,name:"Dog Breeder Management",cat:"Микро-ниша",format:"Excel (.xlsx)",price:35,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Dog_Breeder_Management_2026.xlsx",type:"product",icon:"🐕"},{name:"GoogleSheets/Dog_Breeder_Management_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Управление питомником. 8 вкладок, 25 формул. Breeding Dog Registry, Litter Tracker, Puppy Sales & Deposits, Health Records, Expenses. Демо: Golden Pines Kennel, Golden Retrievers. Navy+Gold."
+  },
+  {id:51,name:"Food Truck Business Tracker",cat:"Микро-ниша",format:"Excel (.xlsx)",price:35,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Food_Truck_Business_2026.xlsx",type:"product",icon:"🌮"},{name:"GoogleSheets/Food_Truck_Business_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Трекер бизнеса фуд-трака. 7 вкладок, 59 формул. Daily Sales by Location, Menu & Food Cost, Expenses & Permits, Location Performance. Демо: Taco Libre, Austin TX. Navy+Gold."
+  },
+  {id:52,name:"Cleaning Business OS",cat:"Микро-ниша",format:"Excel (.xlsx)",price:49,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Cleaning_Business_OS_2026.xlsx",type:"product",icon:"🧹"},{name:"GoogleSheets/Cleaning_Business_OS_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Операционная система для клинингового бизнеса. 7 вкладок, 56 формул. Client Roster (10 клиентов), Revenue by Type, Staff & Payroll, Supply Inventory с reorder alerts. Демо: Sparkle Clean Co, Denver. Navy+Gold."
+  },
+  {id:53,name:"Beekeeping & Apiary Tracker",cat:"Микро-ниша",format:"Excel (.xlsx)",price:25,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Beekeeping_Tracker_2026.xlsx",type:"product",icon:"🐝"},{name:"GoogleSheets/Beekeeping_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Трекер пчеловодства. 7 вкладок, 26 формул. Hive Registry (8 ульев), Honey Production & Sales, Inspection Log, Expenses. Демо: Sunny Meadow Apiaries, OR. Navy+Gold."
+  },
+  {id:54,name:"Tattoo Shop Dashboard",cat:"Микро-ниша",format:"Excel (.xlsx)",price:39,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Tattoo_Shop_Dashboard_2026.xlsx",type:"product",icon:"🎨"},{name:"GoogleSheets/Tattoo_Shop_Dashboard_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Дашборд тату-студии. 6 вкладок, 39 формул. Artist Performance & Commissions, Appointment Tracker, Supply Inventory. Демо: Iron Wolf Tattoo, LA. Navy+Gold."
+  },
+  {id:55,name:"HOA Management Spreadsheet",cat:"Микро-ниша",format:"Excel (.xlsx)",price:49,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"HOA_Management_2026.xlsx",type:"product",icon:"🏘️"},{name:"GoogleSheets/HOA_Management_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Управление ТСЖ/HOA. 7 вкладок, 33 формулы. Homeowner Directory & Dues, Annual Budget, Violation Log, Maintenance Requests. Демо: Sunset Ridge HOA, 120 units. Navy+Gold."
+  },
+  {id:56,name:"Music Teacher Business Tracker",cat:"Микро-ниша",format:"Excel (.xlsx)",price:19,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Music_Teacher_Tracker_2026.xlsx",type:"product",icon:"🎵"},{name:"GoogleSheets/Music_Teacher_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Трекер для частных учителей музыки. 5 вкладок, 11 формул. Student Roster (12 учеников), Lesson Payments, income tracking. Демо: Emily Parker, Piano/Guitar/Voice. Navy+Gold."
+  },
+  {id:57,name:"Yoga Studio Business Tracker",cat:"Микро-ниша",format:"Excel (.xlsx)",price:35,status:"ready",driveUrl:"",platforms:["Etsy"],sales:0,revenue:0,views:0,
+   files:[{name:"Yoga_Studio_Tracker_2026.xlsx",type:"product",icon:"🧘"},{name:"GoogleSheets/Yoga_Studio_Tracker_2026_GoogleSheets.xlsx",type:"gsheets",icon:"📗"}],
+   mockups:[],listing:"",
+   desc:"Трекер для йога-студии. 6 вкладок, 39 формул. Weekly Class Schedule (15 классов), Membership Tracker (MRR), Monthly Revenue. Демо: Zen Flow Yoga, Boulder. Navy+Gold."
+  },
+];
+
+// Brand assets (logos, docs, templates)
+const brandAssets = [
+  {name:"logo_plancraft_digital_art.svg",type:"Логотип",desc:"Основной логотип PlanCraft Digital Art (SVG)",icon:"✨"},
+  {name:"logo_plancraft_digital.svg",type:"Логотип",desc:"Логотип PlanCraft Digital (SVG)",icon:"✨"},
+  {name:"logo_gridflow_studio.svg",type:"Логотип",desc:"Логотип GridFlow Studio (суб-бренд)",icon:"✨"},
+  {name:"logo_lumina_sheets.svg",type:"Логотип",desc:"Логотип Lumina Sheets (суб-бренд)",icon:"✨"},
+  {name:"logo_neatdesk_co.svg",type:"Логотип",desc:"Логотип NeatDesk Co (суб-бренд)",icon:"✨"},
+  {name:"logo_structurevault.svg",type:"Логотип",desc:"Логотип StructureVault (суб-бренд)",icon:"✨"},
+  {name:"Etsy_Shop_Texts.md",type:"Текст",desc:"About, Policies, FAQ, Announcement для Etsy магазина",icon:"📝"},
+  {name:"Etsy_Listing_Template.xlsx",type:"Шаблон",desc:"Шаблон для заполнения листингов Etsy (Excel)",icon:"📋"},
+  {name:"Etsy_Listing_SEO.md",type:"SEO",desc:"SEO-оптимизированное описание Finance Hub для Etsy",icon:"🔍"},
+  {name:"Small_Business_Tracker_SEO.md",type:"SEO",desc:"SEO-листинг SB Tracker: Etsy + Gumroad + Creative Market ($29.99)",icon:"🔍"},
+  {name:"Sports_Betting_Tracker_SEO.md",type:"SEO",desc:"SEO-листинг Betting Tracker: Etsy + Gumroad + Creative Market ($39.99)",icon:"🔍"},
+  {name:"Digital_Products_Research.md",type:"Исследование",desc:"ТОП-20 цифровых продуктов, рынок, цены, конкуренты",icon:"📊"},
+  {name:"PlanCraft_15_Launch_Briefs.md",type:"Промпты",desc:"15 готовых заданий для AI-агентов (создание продуктов)",icon:"🤖"},
+  {name:"PlanCraft_Agent_Prompts.md",type:"Промпты",desc:"Промпты для ролей агентов",icon:"🤖"},
+  {name:"PlanCraft_1M_Strategy.md",type:"Стратегия",desc:"Стратегия роста до $1M/мес, 7 потоков дохода",icon:"🎯"},
+  {name:"PlanCraft_MultiPlatform_Strategy.md",type:"Стратегия",desc:"38 платформ дистрибуции, приоритеты, комиссии",icon:"🌐"},
+  {name:"PlanCraft_Operational_Playbook.md",type:"Стратегия",desc:"Операционный playbook, фазы, роли агентов",icon:"📋"},
+  {name:"PlanCraft_Action_Plan.md",type:"План",desc:"Пошаговый план: LLC, платформы, инструменты",icon:"✅"},
+  {name:"create_finance_hub_guide.py",type:"Код",desc:"Python-скрипт для генерации FinanceHub Guide PDF",icon:"🐍"},
+  {name:"Debt_Payoff_Tracker_SEO.md",type:"SEO",desc:"SEO-листинг Debt Tracker: Etsy + Gumroad + Creative Market ($14.99-19.99)",icon:"🔍"},
+  {name:"Freelancer_Income_Tracker_SEO.md",type:"SEO",desc:"SEO-листинг Freelancer Tracker: Etsy + Gumroad + Creative Market ($19.99-24.99)",icon:"🔍"},
+  {name:"Habit_Tracker_SEO.md",type:"SEO",desc:"SEO-листинг Habit Tracker: Etsy + Gumroad + Creative Market ($9.99-14.99)",icon:"🔍"},
+  {name:"AI_Prompt_Pack_SEO.md",type:"SEO",desc:"SEO-листинг AI Prompt Pack: Etsy + Gumroad + Creative Market ($12.99-14.99)",icon:"🔍"},
+  {name:"PlanCraft_Bundles_SEO.md",type:"SEO",desc:"SEO-листинги 3 бандлов: Finance Pro ($49.99), Business Starter ($39.99), Life Manager ($29.99)",icon:"🔍"},
+  {name:"Digital_Planner_SEO.md",type:"SEO",desc:"SEO-листинг Digital Planner 2026: 15 вкладок, 280 формул ($19.99)",icon:"🔍"},
+  {name:"Instagram_Toolkit_SEO.md",type:"SEO",desc:"SEO-листинг Instagram Content Toolkit: 12 вкладок, 643 формулы ($24.99)",icon:"🔍"},
+  {name:"Notion_Life_OS_SEO.md",type:"SEO",desc:"SEO-листинг Notion Life OS 2026: 15 вкладок, 1415 формул ($29.99)",icon:"🔍"},
+  {name:"Subscription_Manager_SEO.md",type:"SEO",desc:"SEO-листинг Subscription Manager: 6 вкладок, 105 формул ($14.99)",icon:"🔍"},
+  {name:"Savings_Goal_Tracker_SEO.md",type:"SEO",desc:"SEO-листинг Savings Goal Tracker: 6 вкладок, 178 формул ($14.99)",icon:"🔍"},
+  {name:"Investment_Portfolio_SEO.md",type:"SEO",desc:"SEO-листинг Investment Portfolio Tracker: 7 вкладок, 205 формул ($24.99)",icon:"🔍"},
+  {name:"Meal_Planner_SEO.md",type:"SEO",desc:"SEO-листинг Meal Planner & Grocery Budget: 7 вкладок, 106 формул ($12.99)",icon:"🔍"},
+  {name:"Student_Budget_SEO.md",type:"SEO",desc:"SEO-листинг Student Budget Planner: 7 вкладок, 113 формул ($9.99)",icon:"🔍"},
+  {name:"PlanCraft_Pinterest_Content.md",type:"Маркетинг",desc:"40 пин-описаний, 20 шаблонов заголовков, стратегия постинга, профиль Pinterest",icon:"📌"},
+  {name:"Free_Monthly_Budget_2026.xlsx",type:"Лид-магнит",desc:"Бесплатный месячный бюджет для email-подписки, 26 формул, upsell tab",icon:"🎁"},
+];
+
+const planData = [
+  {phase:"ФАЗА 0: ИНФРАСТРУКТУРА (Дни 1-3)", items:[
+    {task:"Создать структуру папок проекта",track:"Агенты",agent:"DevOps",assignee:"",dep:"—",links:"PlanCraft_Operational_Playbook.md",done:true},
+    {task:"Решить: LLC (US) или другая форма",track:"Gin",agent:"—",assignee:"Gin",dep:"—",links:"PlanCraft_Action_Plan.md",done:false},
+    {task:"Получить EIN",track:"Gin",agent:"—",assignee:"Gin",dep:"LLC",links:"",done:false},
+    {task:"Открыть бизнес-счёт (Mercury/Wise)",track:"Gin",agent:"—",assignee:"Gin",dep:"LLC + EIN",links:"",done:false},
+    {task:"Настроить Stripe",track:"Gin",agent:"—",assignee:"Gin",dep:"Бизнес-счёт",links:"",done:false},
+    {task:"Настроить PayPal Business",track:"Gin",agent:"—",assignee:"Тарас",dep:"Бизнес-счёт",links:"",done:false},
+    {task:"Создать магазин Etsy",track:"Gin",agent:"—",assignee:"Gin",dep:"—",links:"",done:true},
+    {task:"Зарегистрироваться на Gumroad",track:"Gin",agent:"—",assignee:"Тарас",dep:"Email + Stripe",links:"",done:false},
+    {task:"Зарегистрироваться на Payhip",track:"Gin",agent:"—",assignee:"Тарас",dep:"Email + Stripe",links:"",done:false},
+    {task:"Подать заявку на Creative Market",track:"Gin",agent:"—",assignee:"Дима",dep:"—",links:"",done:false},
+    {task:"Создать Pinterest бизнес-аккаунт",track:"Gin",agent:"—",assignee:"Дима",dep:"—",links:"",done:false},
+    {task:"Подать заявку Canva Creator Program",track:"Gin",agent:"—",assignee:"Дима",dep:"—",links:"",done:false},
+    {task:"Подать заявку Notion Marketplace",track:"Gin",agent:"—",assignee:"Дима",dep:"—",links:"",done:false},
+    {task:"Зарегистрироваться на Ko-fi Gold",track:"Gin",agent:"—",assignee:"Тарас",dep:"—",links:"",done:false},
+    {task:"Купить Canva Pro ($13/мес)",track:"Gin",agent:"—",assignee:"Gin",dep:"—",links:"",done:false},
+    {task:"Купить eRank ($6/мес)",track:"Gin",agent:"—",assignee:"Gin",dep:"Etsy магазин",links:"",done:false},
+    {task:"Зарегистрировать домен plancraft.digital",track:"Gin",agent:"—",assignee:"Gin",dep:"—",links:"",done:false},
+    {task:"Создать бренд-ассеты (логотип, гайд)",track:"Агенты",agent:"Brand Designer",assignee:"",dep:"—",links:"logo_plancraft_digital_art.svg",done:true},
+  ]},
+  {phase:"ФАЗА 1: ПЕРВЫЕ 5 ПРОДУКТОВ (Дни 4-14)", items:[
+    {task:"Keyword Research для 10 продуктов",track:"Агенты",agent:"SEO Researcher",assignee:"",dep:"Фаза 0",links:"Etsy_Listing_SEO.md",done:true},
+    {task:"Создать Ultimate Budget Dashboard",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"Keyword Research",links:"Ultimate_Budget_Dashboard_2026.xlsx",done:true},
+    {task:"Создать Finance Hub",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"—",links:"FinanceHub_Ultimate.html",done:true},
+    {task:"Создать Debt Payoff Tracker",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"Keyword Research",links:"Debt_Payoff_Tracker_2026.xlsx",done:true},
+    {task:"Создать Digital Planner 2026",track:"Агенты",agent:"PDF Designer",assignee:"",dep:"Canva Pro",links:"",done:false},
+    {task:"Создать Habit Tracker",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"—",links:"Habit_Tracker_2026.xlsx",done:true},
+    {task:"Mockups для каждого продукта (5 изображений)",track:"Агенты",agent:"Mockup Designer",assignee:"",dep:"Продукты",links:"Mockup_*.png",done:false},
+    {task:"SEO-оптимизированные описания для Etsy",track:"Агенты",agent:"SEO Copywriter",assignee:"",dep:"Products + Keywords",links:"Etsy_Listing_Template.xlsx",done:true},
+    {task:"Адаптировать описания для Gumroad/Payhip",track:"Агенты",agent:"Copywriter",assignee:"",dep:"Etsy описания",links:"",done:true},
+    {task:"Опубликовать первые 5 продуктов на Etsy",track:"Gin",agent:"—",assignee:"Gin",dep:"Продукты + Описания + Mockups",links:"",done:false},
+    {task:"Опубликовать на Gumroad + Payhip",track:"Gin",agent:"—",assignee:"Тарас",dep:"Аккаунты + Продукты",links:"",done:false},
+  ]},
+  {phase:"ФАЗА 2: МАСШТАБИРОВАНИЕ (Дни 15-30)", items:[
+    {task:"Создать KPI Dashboard",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"—",links:"KPI_Dashboard_2026.xlsx",done:true},
+    {task:"Создать Social Media Calendar",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"—",links:"Social_Media_Calendar_2026.xlsx",done:true},
+    {task:"Создать Notion Life OS",track:"Агенты",agent:"Notion Dev",assignee:"",dep:"—",links:"",done:false},
+    {task:"Создать AI Prompt Pack",track:"Агенты",agent:"AI Expert",assignee:"",dep:"—",links:"AI_Prompt_Pack_500.md",done:true},
+    {task:"Создать Wedding Budget Planner",track:"Агенты",agent:"Spreadsheet Dev",assignee:"",dep:"—",links:"Wedding_Budget_Planner_2026.xlsx",done:true},
+    {task:"Публикация на Creative Market (если одобрен)",track:"Gin",agent:"—",assignee:"Дима",dep:"Одобрение CM",links:"",done:false},
+    {task:"Публикация на Creative Fabrica",track:"Gin",agent:"—",assignee:"Дима",dep:"Аккаунт",links:"",done:false},
+    {task:"Запуск Pinterest (30 пинов)",track:"Агенты",agent:"Pinterest Manager",assignee:"",dep:"Pinterest аккаунт",links:"PlanCraft_Pinterest_Content.md",done:false},
+    {task:"Запуск Etsy Ads ($5-10/день)",track:"Gin",agent:"—",assignee:"Gin",dep:"Первые продажи",links:"",done:false},
+    {task:"Анализ первых продаж и оптимизация",track:"Агенты",agent:"Analytics",assignee:"",dep:"2 недели данных",links:"",done:false},
+  ]},
+];
+
+const expenses = [
+  {name:"Canva Pro",amount:13,category:"Инструменты"},
+  {name:"eRank (Etsy SEO)",amount:6,category:"Инструменты"},
+  {name:"Ko-fi Gold",amount:6,category:"Платформы"},
+  {name:"Домен plancraft.digital",amount:1,category:"Инфраструктура"},
+  {name:"MailerLite (Free → $10)",amount:0,category:"Маркетинг"},
+  {name:"Etsy Ads бюджет",amount:0,category:"Реклама"},
+  {name:"AI подписки (Claude/GPT)",amount:40,category:"Инструменты"},
+  {name:"Хостинг (будущий сайт)",amount:0,category:"Инфраструктура"},
+  {name:"Stripe Atlas / LLC fees",amount:0,category:"Юридика"},
+];
+
+const revenueStreams = [
+  {name:"Etsy Empire",target:150000,color:"#D4AF37"},
+  {name:"Direct Sales",target:100000,color:"#3B82F6"},
+  {name:"Membership",target:200000,color:"#8B5CF6"},
+  {name:"Курсы",target:200000,color:"#10B981"},
+  {name:"B2B/Licensing",target:150000,color:"#F59E0B"},
+  {name:"SaaS",target:150000,color:"#EF4444"},
+  {name:"Ads & Sponsors",target:50000,color:"#06B6D4"},
+];
+
+const pipelineStages = [
+  {icon:"🔍",name:"Research",label:"Исследование",count:0},
+  {icon:"⚙️",name:"Creation",label:"Создание",count:0},
+  {icon:"✅",name:"QA",label:"Проверка",count:12},
+  {icon:"🎨",name:"Mockups",label:"Дизайн",count:0},
+  {icon:"🚀",name:"Published",label:"Опубликовано",count:0},
+];
+
+const agents = [
+  {name:"SEO Researcher",role:"Keyword research, конкурентный анализ",cat:"marketing",icon:"🔍",bg:"#DBEAFE",status:"idle"},
+  {name:"Spreadsheet Dev",role:"Google Sheets & Excel дашборды",cat:"creation",icon:"📊",bg:"#D1FAE5",status:"active"},
+  {name:"PDF Designer",role:"Интерактивные PDF-планеры",cat:"creation",icon:"📄",bg:"#FEF3C7",status:"idle"},
+  {name:"Canva Designer",role:"Social media & brand templates",cat:"creation",icon:"🎨",bg:"#FCE7F3",status:"idle"},
+  {name:"Notion Dev",role:"Notion templates & workspaces",cat:"creation",icon:"📝",bg:"#E0E7FF",status:"idle"},
+  {name:"AI Expert",role:"AI prompt packs & automation",cat:"creation",icon:"🤖",bg:"#CFFAFE",status:"idle"},
+  {name:"Brand Designer",role:"Логотипы, стиль, айдентика",cat:"quality",icon:"✨",bg:"#FDE68A",status:"active"},
+  {name:"Mockup Designer",role:"Продуктовые mockups (5 на продукт)",cat:"quality",icon:"🖼️",bg:"#E9D5FF",status:"idle"},
+  {name:"QA Reviewer",role:"Проверка продуктов перед публикацией",cat:"quality",icon:"✅",bg:"#BBF7D0",status:"idle"},
+  {name:"SEO Copywriter",role:"Etsy listings, теги, описания",cat:"marketing",icon:"✍️",bg:"#FECDD3",status:"idle"},
+  {name:"Copywriter",role:"Gumroad, Creative Market описания",cat:"marketing",icon:"📝",bg:"#FED7AA",status:"idle"},
+  {name:"Pinterest Manager",role:"Пины, доски, SEO Pinterest",cat:"marketing",icon:"📌",bg:"#FCA5A5",status:"idle"},
+  {name:"YouTube Manager",role:"Скрипты, thumbnails, SEO YouTube",cat:"marketing",icon:"▶️",bg:"#FCA5A5",status:"idle"},
+  {name:"Email Marketer",role:"Newsletter, sequences, lead magnets",cat:"marketing",icon:"📧",bg:"#A5B4FC",status:"idle"},
+  {name:"Publisher",role:"Публикация на всех площадках",cat:"ops",icon:"🚀",bg:"#99F6E4",status:"idle"},
+  {name:"Analytics",role:"Мониторинг метрик, отчёты, оптимизация",cat:"ops",icon:"📈",bg:"#C4B5FD",status:"idle"},
+  {name:"Ads Manager",role:"Etsy Ads, Pinterest Ads бюджеты",cat:"marketing",icon:"💰",bg:"#FDE68A",status:"idle"},
+  {name:"Project Manager",role:"Координация агентов, приоритеты",cat:"ops",icon:"📋",bg:"#BAE6FD",status:"active"},
+  {name:"Customer Support",role:"Отзывы, вопросы покупателей",cat:"ops",icon:"💬",bg:"#D9F99D",status:"idle"},
+  {name:"Pricing Analyst",role:"Динамическое ценообразование, A/B тесты",cat:"ops",icon:"🏷️",bg:"#FBCFE8",status:"idle"},
+];
+
+// ============ RENDER ============
+
+// Header date
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('ru-RU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('headerProductCount').textContent = products.length;
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// === TAB 1: Platforms ===
+function renderPlatforms(filter) {
+  const grid = document.getElementById('platformGrid');
+  const filtered = filter === 'all' ? platforms : platforms.filter(p => p.cat === filter);
+  grid.innerHTML = filtered.map(p => `
+    <div class="platform-card" onclick="openModal(${p.id})">
+      <span class="priority-badge ${p.priority.toLowerCase()}">${p.priority}</span>
+      <div class="platform-icon" style="background:${p.iconBg}20;">${p.icon}</div>
+      <div class="platform-name">${p.name}</div>
+      <div class="platform-category">${p.catName}</div>
+      <div class="platform-audience">👥 ${p.audience}</div>
+      <div class="platform-commission">💸 ${p.commission}</div>
+      <div class="platform-fit">
+        ${[1,2,3,4,5].map(s => `<span class="fit-star ${s<=p.fit?'':'empty'}">★</span>`).join('')}
+        <span style="font-size:11px;color:var(--text-secondary);margin-left:4px;">Fit</span>
+      </div>
+      <span class="platform-status status-${p.status}">${p.status==='active'?'Активна':p.status==='pending'?'Создан аккаунт':'Не начато'}</span>
+      <div class="platform-metrics">
+        <div class="pm-item"><div class="pm-label">Продажи</div><div class="pm-value">${p.sales}</div></div>
+        <div class="pm-item"><div class="pm-label">Выручка</div><div class="pm-value">$${p.revenue}</div></div>
+        <div class="pm-item"><div class="pm-label">Просмотры</div><div class="pm-value">${p.views}</div></div>
+        <div class="pm-item"><div class="pm-label">Конверсия</div><div class="pm-value">${p.conversion}%</div></div>
+      </div>
+    </div>
+  `).join('');
+}
+renderPlatforms('all');
+
+document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPlatforms(btn.dataset.filter);
+  });
+});
+
+// Modal
+function openModal(id) {
+  const p = platforms.find(pl => pl.id === id);
+  if (!p) return;
+  document.getElementById('modalIcon').innerHTML = p.icon;
+  document.getElementById('modalIcon').style.background = p.iconBg + '20';
+  document.getElementById('modalName').textContent = p.name;
+  document.getElementById('modalCategory').textContent = p.catName + ' • ' + p.priority;
+  document.getElementById('modalDesc').innerHTML = `<strong>Описание:</strong> ${p.desc}<br><br><strong>Почему подходит нам:</strong> ${p.fitReason}`;
+  document.getElementById('modalInfoGrid').innerHTML = `
+    <div class="modal-info-item"><div class="modal-info-label">Аудитория</div><div class="modal-info-value">${p.audience}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Комиссия</div><div class="modal-info-value">${p.commission}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Fit Score</div><div class="modal-info-value">${'★'.repeat(p.fit)}${'☆'.repeat(5-p.fit)} (${p.fit}/5)</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Статус</div><div class="modal-info-value">${p.status==='active'?'Активна':p.status==='pending'?'Создан аккаунт':'Не начато'}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Продажи</div><div class="modal-info-value">${p.sales}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Выручка</div><div class="modal-info-value">$${p.revenue}</div></div>
+  `;
+  const prodHtml = products.filter(pr => pr.platforms.includes(p.name)).map(pr => `
+    <div class="modal-product-row">
+      <div><div class="modal-product-name">${pr.name}</div><div class="modal-product-meta">${pr.cat} • ${pr.format}</div></div>
+      <div><span class="product-status-badge pstatus-${pr.status}">${pr.status}</span></div>
+    </div>
+  `).join('');
+  document.getElementById('modalProducts').innerHTML = prodHtml || '<div style="color:var(--text-secondary);font-size:13px;padding:12px;">Продукты пока не размещены на этой площадке</div>';
+  document.getElementById('platformModal').classList.add('open');
+}
+function closeModal() { document.getElementById('platformModal').classList.remove('open'); }
+document.getElementById('platformModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeModal(); });
+
+// === TAB 2: Plan ===
+function renderPlan() {
+  const humanBody = document.getElementById('planBodyHuman');
+  const agentBody = document.getElementById('planBodyAgent');
+  const assigneeFilter = document.getElementById('humanAssignee').value;
+  let totalTasks = 0, doneTasks = 0;
+  let humanHtml = '', agentHtml = '';
+
+  const assigneeColors = {
+    'Gin': {bg:'#FEF3C7',color:'#92400E'},
+    'Тарас': {bg:'#DBEAFE',color:'#1E40AF'},
+    'Дима': {bg:'#E0E7FF',color:'#4338CA'},
+  };
+
+  planData.forEach(phase => {
+    let hasHuman = false, hasAgent = false;
+    let phaseHumanHtml = '', phaseAgentHtml = '';
+
+    phase.items.forEach((item,i) => {
+      totalTasks++;
+      if(item.done) doneTasks++;
+      const strikeStyle = item.done ? 'text-decoration:line-through;color:var(--text-secondary);' : '';
+      const statusBadge = `<span class="platform-status ${item.done?'status-active':'status-not-started'}">${item.done?'Готово':'В ожидании'}</span>`;
+      const linksHtml = item.links ? item.links.split(',').map(l => `<a href="#">${l.trim()}</a>`).join(', ') : '—';
+
+      if(item.track === 'Gin') {
+        if(assigneeFilter !== 'all' && item.assignee !== assigneeFilter) return;
+        hasHuman = true;
+        const ac = assigneeColors[item.assignee] || {bg:'#F3F4F6',color:'#6B7280'};
+        phaseHumanHtml += `<tr>
+          <td><input type="checkbox" ${item.done?'checked':''} onchange="toggleTask(this,'${phase.phase}',${i})"></td>
+          <td style="${strikeStyle}">${item.task}</td>
+          <td>
+            <select style="padding:3px 6px;border-radius:0;border:1px solid var(--border-dark);font-size:11px;font-weight:600;background:${ac.bg};color:${ac.color};cursor:pointer;" onchange="changeAssignee('${phase.phase}',${i},this.value);renderPlan();">
+              <option value="Gin" ${item.assignee==='Gin'?'selected':''}>Gin</option>
+              <option value="Тарас" ${item.assignee==='Тарас'?'selected':''}>Тарас</option>
+              <option value="Дима" ${item.assignee==='Дима'?'selected':''}>Дима</option>
+            </select>
+          </td>
+          <td style="font-size:12px;color:var(--text-secondary);">${item.dep}</td>
+          <td>${linksHtml}</td>
+          <td>${statusBadge}</td>
+        </tr>`;
+      } else {
+        hasAgent = true;
+        phaseAgentHtml += `<tr>
+          <td><input type="checkbox" ${item.done?'checked':''} onchange="toggleTask(this,'${phase.phase}',${i})"></td>
+          <td style="${strikeStyle}">${item.task}</td>
+          <td style="font-size:12px;color:var(--text-secondary);">${item.agent}</td>
+          <td style="font-size:12px;color:var(--text-secondary);">${item.dep}</td>
+          <td>${linksHtml}</td>
+          <td>${statusBadge}</td>
+        </tr>`;
+      }
+    });
+
+    if(hasHuman || (assigneeFilter === 'all')) {
+      humanHtml += `<tr class="phase-header"><td colspan="6">${phase.phase}</td></tr>` + phaseHumanHtml;
+    }
+    if(hasAgent) {
+      agentHtml += `<tr class="phase-header"><td colspan="6">${phase.phase}</td></tr>` + phaseAgentHtml;
+    }
+  });
+
+  humanBody.innerHTML = humanHtml || '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-secondary);">Нет задач для выбранного исполнителя</td></tr>';
+  agentBody.innerHTML = agentHtml;
+
+  const pct = totalTasks ? Math.round(doneTasks/totalTasks*100) : 0;
+  document.getElementById('planProgress').textContent = pct + '%';
+  document.getElementById('planProgressBar').style.width = pct + '%';
+  document.getElementById('planDone').textContent = doneTasks;
+  document.getElementById('planTotal').textContent = 'из ' + totalTasks;
+}
+
+function changeAssignee(phaseName, idx, value) {
+  const phase = planData.find(p => p.phase === phaseName);
+  if(phase) phase.items[idx].assignee = value;
+}
+
+function toggleTask(cb, phaseName, idx) {
+  const phase = planData.find(p => p.phase === phaseName);
+  if(phase) phase.items[idx].done = cb.checked;
+  renderPlan();
+}
+renderPlan();
+
+// === TAB 3: Catalog ===
+function renderCatalog(filter) {
+  filter = filter || 'all';
+  const container = document.getElementById('catalogCards');
+  const filtered = filter === 'all' ? products : products.filter(p => p.status === filter);
+
+  const statusLabels = {draft:'Черновик',ready:'Готов к продаже',published:'Опубликован',selling:'Продаётся',pending:'Запланирован'};
+  const statusClasses = {draft:'pstatus-draft',ready:'pstatus-ready',published:'pstatus-published',selling:'pstatus-selling',pending:'pstatus-pending'};
+
+  const catIcons = {'Финансы':'💰','Бизнес':'💼','Продуктивность':'⚡','Маркетинг':'📱','Спорт':'🏆','Свадьба':'💍','Образование':'🎓','AI':'🤖','Дизайн':'🎨','Планер':'📅','Здоровье':'🍎','Другое':'📄'};
+
+  container.innerHTML = filtered.map((p,i) => {
+    const statusClass = statusClasses[p.status] || 'pstatus-pending';
+    const icon = catIcons[p.cat] || '📄';
+
+    return `<div class="product-card" onclick="openProductModal(${p.id})" style="cursor:pointer;position:relative;">
+      <div class="product-card-header">
+        <div class="product-card-icon">${icon}</div>
+        <div>
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-category">${p.cat} • ${p.format}</div>
+        </div>
+      </div>
+      <div class="product-card-status ${statusClass}">${statusLabels[p.status]}</div>
+      ${p.price ? '<div class="product-card-price">$' + p.price + '</div>' : ''}
+      <button onclick="event.stopPropagation();deleteProduct(${p.id});" class="product-delete-btn" title="Удалить продукт">✕</button>
+    </div>`;
+  }).join('');
+
+  // Brand assets
+  const assetsGrid = document.getElementById('brandAssetsGrid');
+  assetsGrid.innerHTML = brandAssets.map(a =>
+    `<a href="${a.name}" style="display:flex;align-items:center;gap:12px;background:var(--bg-card);border-radius:0;padding:12px 16px;border:1px solid var(--border-dark);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-dark)'">
+      <div style="width:36px;height:36px;border-radius:0;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--border-dark);">${a.icon}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.name}</div>
+        <div style="font-size:11px;color:var(--text-secondary);">${a.type} — ${a.desc}</div>
+      </div>
+    </a>`
+  ).join('');
+
+  // Update KPI counters
+  const totalFiles = products.reduce((s,p) => s + (p.files ? p.files.length : 0) + (p.mockups ? p.mockups.length : 0), 0);
+  document.getElementById('catFiles').textContent = totalFiles;
+  document.getElementById('catAssets').textContent = brandAssets.length;
+  const readyCount = products.filter(p=>p.status==='ready').length;
+  const draftCount = products.filter(p=>p.status==='draft').length;
+  const pendingCount = products.filter(p=>p.status==='pending').length;
+  document.getElementById('catTotal').textContent = products.length;
+  document.getElementById('catReady').textContent = readyCount;
+  document.getElementById('catPending').textContent = pendingCount;
+  const fr = document.getElementById('filterReady'); if(fr) fr.textContent = 'Готовые (' + readyCount + ')';
+  const fd = document.getElementById('filterDraft'); if(fd) fd.textContent = 'Черновики (' + draftCount + ')';
+  const fp = document.getElementById('filterPending'); if(fp) fp.textContent = 'Запланировано (' + pendingCount + ')';
+}
+
+function openProductModal(id) {
+  const p = products.find(pr => pr.id === id);
+  if (!p) return;
+  const catIcons = {'Финансы':'💰','Бизнес':'💼','Продуктивность':'⚡','Маркетинг':'📱','Спорт':'🏆','Свадьба':'💍','Образование':'🎓','AI':'🤖','Дизайн':'🎨','Планер':'📅','Здоровье':'🍎','Другое':'📄'};
+  const statusLabels = {draft:'Черновик',ready:'Готов к продаже',published:'Опубликован',selling:'Продаётся',pending:'Запланирован'};
+  const icon = catIcons[p.cat] || '📄';
+
+  document.getElementById('prodModalIcon').textContent = icon;
+  document.getElementById('prodModalName').textContent = p.name;
+  document.getElementById('prodModalMeta').textContent = p.cat + ' • ' + p.format + (p.price ? ' • $' + p.price : ' • Бесплатно');
+
+  document.getElementById('prodModalInfo').innerHTML = `
+    <div class="modal-info-item"><div class="modal-info-label">Статус</div><div class="modal-info-value"><span class="product-status-badge pstatus-${p.status}">${statusLabels[p.status]}</span></div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Цена</div><div class="modal-info-value">${p.price ? '$' + p.price : 'Бесплатно'}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Формат</div><div class="modal-info-value">${p.format}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Продажи</div><div class="modal-info-value">${p.sales}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Выручка</div><div class="modal-info-value">$${p.revenue}</div></div>
+    <div class="modal-info-item"><div class="modal-info-label">Просмотры</div><div class="modal-info-value">${p.views}</div></div>
+  `;
+
+  const descText = p.desc || '';
+  document.getElementById('prodModalDesc').innerHTML = descText ? `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;"><div id="prodDescText" style="flex:1;line-height:1.6;"><strong>Описание:</strong> ${descText}</div><button class="copy-btn" onclick="event.stopPropagation();copyToClipboard(document.getElementById('prodDescText').innerText, this);" style="flex-shrink:0;">📋 Копия</button></div>` : '<span style="color:var(--text-secondary);">Описание отсутствует</span>';
+
+  // Files — clickable with download/open links
+  const fileTypeStyles = {
+    product: {bg:'rgba(148,163,184,0.06)', border:'rgba(148,163,184,0.12)', color:'#94A3B8'},
+    guide: {bg:'rgba(139,92,246,0.1)', border:'rgba(139,92,246,0.3)', color:'#8B5CF6'},
+    preview: {bg:'rgba(245,158,11,0.1)', border:'rgba(245,158,11,0.3)', color:'#F59E0B'},
+    prototype: {bg:'rgba(168,85,247,0.1)', border:'rgba(168,85,247,0.3)', color:'#A855F7'},
+  };
+  let filesHtml = '<div class="modal-products-title" style="margin-bottom:8px;">📂 Файлы продукта:</div>';
+  if (p.files && p.files.length) {
+    filesHtml += p.files.map(f => {
+      const st = fileTypeStyles[f.type] || fileTypeStyles.product;
+      return `<a href="${f.name}" download="${f.name}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:${st.bg};border:1px solid ${st.border};margin-bottom:5px;text-decoration:none;transition:all 0.25s;cursor:pointer;" onmouseover="this.style.boxShadow='0 0 12px ${st.border}'" onmouseout="this.style.boxShadow='none'">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">${f.icon}</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:${st.color};">${f.name}</div>
+            <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;">${f.type}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:5px;">
+          <span style="padding:3px 8px;background:${st.border};color:#fff;font-size:10px;font-weight:700;">⬇ Скачать</span>
+          <span onclick="event.preventDefault();event.stopPropagation();window.open('${f.name}','_blank');" style="padding:3px 8px;background:var(--bg-secondary);border:1px solid var(--border-dark);color:var(--text-primary);font-size:10px;font-weight:700;cursor:pointer;">↗ Открыть</span>
+        </div>
+      </a>`;
+    }).join('');
+  } else {
+    filesHtml += '<div style="color:var(--text-secondary);font-size:13px;padding:12px;background:var(--bg-card);border:1px dashed var(--border-dark);">Файлов пока нет</div>';
+  }
+
+  // Google Drive link
+  if (p.driveUrl) {
+    filesHtml += `<a href="${p.driveUrl}" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.3);margin-top:8px;text-decoration:none;transition:all 0.25s;" onmouseover="this.style.boxShadow='0 0 12px rgba(66,133,244,0.3)'" onmouseout="this.style.boxShadow='none'">
+      <span style="font-size:20px;">☁️</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:#4285F4;">Открыть в Google Drive</div>
+        <div style="font-size:10px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.driveUrl}</div>
+      </div>
+      <span style="padding:3px 10px;background:rgba(66,133,244,0.3);color:#fff;font-size:10px;font-weight:700;">↗ Drive</span>
+    </a>`;
+  } else {
+    filesHtml += `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-card);border:1px dashed var(--border-dark);margin-top:8px;">
+      <span style="font-size:18px;opacity:0.4;">☁️</span>
+      <div><div style="font-size:12px;color:var(--text-secondary);">Google Drive ссылка не добавлена</div></div>
+    </div>`;
+  }
+  document.getElementById('prodModalFiles').innerHTML = filesHtml;
+
+  // Mockups — clickable
+  if (p.mockups && p.mockups.length) {
+    document.getElementById('prodModalMockups').innerHTML = '<div class="modal-products-title">🖼 Мокапы:</div>' + p.mockups.map(m =>
+      `<a href="${m}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-dark);margin-bottom:4px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border-dark)'">
+        <div style="display:flex;align-items:center;gap:8px;"><span>🖼</span><span style="font-size:12px;font-weight:600;color:var(--text-primary);">${m}</span></div>
+        <span style="padding:2px 8px;background:var(--bg-secondary);border:1px solid var(--border-dark);color:var(--text-secondary);font-size:10px;">↗</span>
+      </a>`
+    ).join('');
+  } else {
+    document.getElementById('prodModalMockups').innerHTML = '';
+  }
+
+  // SEO listing — inline with copy buttons
+  if (p.listing && seoDatabase[p.listing]) {
+    const seo = seoDatabase[p.listing];
+    const seoHtml = `<div class="modal-products-title" style="margin-bottom:10px;">🔍 SEO для Etsy (готово к копированию):</div>
+      <div style="background:var(--bg-card);border:1px solid var(--border-dark);padding:14px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Заголовок (SEO Title)</div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyToClipboard(this.parentElement.nextElementSibling.textContent, this);">📋 Копировать</button>
+        </div>
+        <div style="font-size:13px;color:#94A3B8;font-weight:600;line-height:1.5;">${seo.title}</div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border-dark);padding:14px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Теги (13 тегов для Etsy)</div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyToClipboard(this.parentElement.nextElementSibling.textContent, this);">📋 Копировать</button>
+        </div>
+        <div style="font-size:12px;color:#22C55E;line-height:1.6;">${seo.tags}</div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border-dark);padding:14px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Краткое описание (160 символов)</div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyToClipboard(this.parentElement.nextElementSibling.textContent, this);">📋 Копировать</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-primary);line-height:1.5;">${seo.shortDesc}</div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border-dark);padding:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;font-weight:700;">Полное описание</div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyToClipboard(this.parentElement.nextElementSibling.innerText, this);">📋 Копировать</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-secondary);line-height:1.6;max-height:200px;overflow-y:auto;white-space:pre-wrap;">${seo.fullDesc}</div>
+      </div>`;
+    document.getElementById('prodModalSEO').innerHTML = seoHtml;
+  } else if (p.listing) {
+    document.getElementById('prodModalSEO').innerHTML = `<div class="modal-products-title">🔍 SEO-листинг:</div><div style="color:var(--text-secondary);font-size:12px;padding:10px;background:var(--bg-card);border:1px solid var(--border-dark);">Файл ${p.listing} — данные загружаются из файла</div>`;
+  } else {
+    document.getElementById('prodModalSEO').innerHTML = '';
+  }
+
+  // Platforms — with clickable links to platform stores
+  const platformUrls = {
+    'Etsy': 'https://www.etsy.com/shop/PlanCraftDigitalArt',
+    'Gumroad': 'https://plancraftdigital.gumroad.com',
+    'Creative Market': 'https://creativemarket.com',
+    'Notion Marketplace': 'https://www.notion.so/templates',
+    'Payhip': 'https://payhip.com',
+    'Ko-fi': 'https://ko-fi.com',
+  };
+  if (p.platforms && p.platforms.length) {
+    document.getElementById('prodModalPlatforms').innerHTML = '<div class="modal-products-title">🌐 Площадки:</div><div style="display:flex;flex-wrap:wrap;gap:6px;">' + p.platforms.map(pl => {
+      const url = platformUrls[pl] || '#';
+      return `<a href="${url}" target="_blank" style="display:flex;align-items:center;gap:4px;padding:5px 12px;background:var(--bg-secondary);border:1px solid var(--border-dark);font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.boxShadow='0 0 8px rgba(212,175,55,0.2)'" onmouseout="this.style.borderColor='var(--border-dark)';this.style.boxShadow='none'">${pl} <span style="font-size:10px;opacity:0.6;">↗</span></a>`;
+    }).join('') + '</div>';
+  } else {
+    document.getElementById('prodModalPlatforms').innerHTML = '<div class="modal-products-title">🌐 Площадки:</div><div style="color:var(--text-secondary);font-size:13px;padding:8px 0;">Пока не размещён</div>';
+  }
+
+  document.getElementById('productModal').classList.add('open');
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('open');
+}
+document.getElementById('productModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeProductModal(); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeProductModal(); closeAddProductModal(); closeModal(); }
+});
+
+document.querySelectorAll('.filter-btn[data-cat-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn[data-cat-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCatalog(btn.dataset.catFilter);
+  });
+});
+
+renderCatalog();
+
+// Add Product Modal
+function openAddProductModal() {
+  document.getElementById('addProductModal').classList.add('open');
+  document.getElementById('ap_name').focus();
+}
+function closeAddProductModal() {
+  document.getElementById('addProductModal').classList.remove('open');
+  document.getElementById('addProductForm').reset();
+}
+document.getElementById('addProductModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAddProductModal();
+});
+
+function submitAddProduct(e) {
+  e.preventDefault();
+  const name = document.getElementById('ap_name').value.trim();
+  const cat = document.getElementById('ap_cat').value;
+  const format = document.getElementById('ap_format').value;
+  const price = parseFloat(document.getElementById('ap_price').value) || 0;
+  const status = document.getElementById('ap_status').value;
+  const platformsStr = document.getElementById('ap_platforms').value.trim();
+  const platforms = platformsStr ? platformsStr.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const filesStr = document.getElementById('ap_files').value.trim();
+  const files = filesStr ? filesStr.split(',').map(s => {
+    const n = s.trim();
+    const ext = n.split('.').pop().toLowerCase();
+    const icons = {xlsx:'📊',pdf:'📖',html:'🌐',md:'📝',png:'🖼',gif:'🎬',csv:'📋'};
+    return {name:n, type:'product', icon: icons[ext] || '📄'};
+  }) : [];
+  const listing = document.getElementById('ap_listing').value.trim();
+  const mockupsStr = document.getElementById('ap_mockups').value.trim();
+  const mockups = mockupsStr ? mockupsStr.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const desc = document.getElementById('ap_desc').value.trim();
+
+  const newId = products.length ? Math.max(...products.map(p=>p.id)) + 1 : 1;
+  products.push({
+    id:newId, name, cat, format, price, status, platforms,
+    sales:0, revenue:0, views:0, files, mockups, listing, desc
+  });
+
+  closeAddProductModal();
+
+  // Re-render with current filter
+  const activeFilter = document.querySelector('.filter-btn[data-cat-filter].active');
+  renderCatalog(activeFilter ? activeFilter.dataset.catFilter : 'all');
+
+  // Flash the new card
+  setTimeout(() => {
+    const cards = document.getElementById('catalogCards').children;
+    if (cards.length) {
+      const last = cards[cards.length - 1];
+      last.style.transition = 'box-shadow 0.3s';
+      last.style.boxShadow = '0 0 0 3px var(--gold), 0 4px 20px rgba(212,175,55,0.3)';
+      setTimeout(() => { last.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; }, 2000);
+    }
+  }, 100);
+}
+
+// === TAB 4: Finance ===
+function renderFinance() {
+  const list = document.getElementById('expensesList');
+  let total = 0;
+  list.innerHTML = expenses.map(e => {
+    total += e.amount;
+    return `<div class="expense-row">
+      <span class="expense-name">${e.name} <span style="font-size:10px;color:var(--text-secondary);">${e.category}</span></span>
+      <span class="expense-amount">${e.amount ? '$'+e.amount+'/мес' : '$0'}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('expensesTotal').textContent = '$' + total + '/мес';
+
+  // Revenue forecast chart
+  const revCtx = document.getElementById('revenueChart').getContext('2d');
+  new Chart(revCtx, {
+    type: 'line',
+    data: {
+      labels: ['Мес 1','Мес 2','Мес 3','Мес 4','Мес 5','Мес 6','Мес 7','Мес 8','Мес 9','Мес 10','Мес 11','Мес 12'],
+      datasets: [{
+        label: 'Прогноз выручки',
+        data: [0,0,0,0,0,0,0,0,0,0,0,0],
+        borderColor: '#D4AF37',
+        backgroundColor: 'rgba(212,175,55,0.2)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#D4AF37',
+      },{
+        label: 'Факт выручки',
+        data: [0,0,0,0,0,0,0,0,0,0,0,0],
+        borderColor: '#22C55E',
+        backgroundColor: 'rgba(34,197,94,0.2)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#22C55E',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: {size:11}, color: '#8A94A6' } } },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => '$'+v, color: '#8A94A6' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        x: { ticks: { color: '#8A94A6' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+
+  // Revenue streams chart
+  const strCtx = document.getElementById('streamsChart').getContext('2d');
+  new Chart(strCtx, {
+    type: 'doughnut',
+    data: {
+      labels: revenueStreams.map(s => s.name),
+      datasets: [{
+        data: revenueStreams.map(s => s.target),
+        backgroundColor: revenueStreams.map(s => s.color),
+        borderWidth: 2,
+        borderColor: '#131318',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: {size:11}, padding:8, color: '#8A94A6' } },
+        title: { display: true, text: 'Целевое распределение $1M/мес', font: {size:12}, color: '#8A94A6' }
+      }
+    }
+  });
+
+  // ROI chart
+  const roiCtx = document.getElementById('roiChart').getContext('2d');
+  const topPlatforms = platforms.filter(p => p.priority === 'P0' || p.priority === 'P1').slice(0,10);
+  new Chart(roiCtx, {
+    type: 'bar',
+    data: {
+      labels: topPlatforms.map(p => p.name),
+      datasets: [{
+        label: 'Выручка',
+        data: topPlatforms.map(() => 0),
+        backgroundColor: '#D4AF3740',
+        borderColor: '#D4AF37',
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => '$'+v, color: '#8A94A6' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        x: { ticks: { font: {size:10}, color: '#8A94A6' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+}
+renderFinance();
+
+// === TAB 5: Agents ===
+function renderAgents() {
+  const pipeline = document.getElementById('pipelineStages');
+  pipeline.innerHTML = pipelineStages.map((s,i) => `
+    <div class="pipeline-stage">
+      <div class="stage-icon">${s.icon}</div>
+      <div class="stage-name">${s.name}</div>
+      <div class="stage-count">${s.count}</div>
+      <div class="stage-label">${s.label}</div>
+    </div>
+  `).join('');
+
+  renderAgentGrid('all');
+}
+
+function renderAgentGrid(filter) {
+  const grid = document.getElementById('agentGrid');
+  const filtered = filter === 'all' ? agents : agents.filter(a => a.cat === filter);
+  grid.innerHTML = filtered.map(a => `
+    <div class="agent-card">
+      <div class="agent-avatar" style="background:${a.bg}">${a.icon}</div>
+      <div class="agent-info">
+        <div class="agent-name">${a.name}</div>
+        <div class="agent-role">${a.role}</div>
+      </div>
+      <div class="agent-status-dot dot-${a.status}"></div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.filter-btn[data-agent-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn[data-agent-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAgentGrid(btn.dataset.agentFilter);
+  });
+});
+
+renderAgents();
+
+// ============ PINTEREST PINS GRID ============
+const pinterestPins = [
+  {product:'Construction OS',slug:'construction',types:['hero','features','problem','stats','tips'],color:'#2979FF'},
+  {product:'Airbnb OS',slug:'airbnb',types:['hero','features','problem','stats','tips'],color:'#00C853'},
+  {product:'Rental Property OS',slug:'rental',types:['hero','features','problem','stats','tips'],color:'#9C27B0'},
+  {product:'Etsy Seller OS',slug:'etsy_seller',types:['hero','features','problem','stats','tips'],color:'#FF6D00'},
+  {product:'Vet/Dental Clinic OS',slug:'vet_dental',types:['hero','features','problem','stats','tips'],color:'#E91E63'},
+  {product:'Farm Business OS',slug:'farm',types:['hero','features','problem','stats','tips'],color:'#795548'},
+  {product:'Compliance Kit',slug:'compliance',types:['hero','features','problem','stats','tips'],color:'#F44336'}
+];
+const pinGrid = document.getElementById('pinterestGrid');
+if(pinGrid) {
+  pinGrid.innerHTML = pinterestPins.map(p => `
+    <div style="background:#1a1a2e;border:1px solid ${p.color}33;border-radius:12px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:${p.color};"></div>
+        <div style="color:${p.color};font-weight:700;font-size:14px;">${p.product}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${p.types.map(t => `<span style="background:${p.color}22;color:${p.color};padding:3px 8px;border-radius:6px;font-size:11px;">${t}</span>`).join('')}
+      </div>
+      <div style="color:#666;font-size:11px;margin-top:8px;">5 pins • pinterest_pins/${p.slug}_*.png</div>
+    </div>
+  `).join('');
+}
+
+// Keyboard: Escape closes modal
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+
+// ============ SEO DATABASE (embedded from MD files) ============
+const seoDatabase = {
+  'AI_Prompt_Pack_SEO.md': {
+    title: '500+ AI Prompt Pack for Small Business — SEO & Listing Optimization',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Student_Budget_Planner_SEO.md': {
+    title: 'Student Budget Planner 2026 - Complete Semester Budgeting & Financial Management',
+    tags: 'student budget, budget planner, student planner, college budget, expense tracker, financial planning, scholarship tracker, student loan calculator, college expenses, money management, budgeting, financial wellness, student money',
+    shortDesc: 'Master semester finances: track income (scholarships, jobs), manage expenses by category, calculate student loans. 7 sheets, 113 formulas. Navy+Gold design. Instant access.',
+    fullDesc: 'Take Control of Your College Finances\n\nCollege is expensive. Between tuition, housing, food, books, and living expenses, students face overwhelming financial decisions. The Student Budget Planner 2026 transforms financial chaos into clarity, helping you manage limited resources, understand your true cost of college, and graduate with less debt.\n\nThis practical Excel system is designed specifically for student finances. Track scholarships and financial aid, monitor job income, manage variable semester expenses, calculate student loan impact, and maintain healthy spending habits throughout your college years. Take control of your finances now and set yourself up for post-graduation success.\n\nWhat\'s Included (7 Focused Sheets)\n\nIncome Tracking\n• Income Dashboard – Overview of all income sources (scholarships, grants, work-study, part-time jobs)\n• Scholarship & Financial Aid Tracker – Monitor all sources of funding with award amounts, disbursement dates, and terms\n• Job Income Log – Track hours worked, pay rates, and income from part-time and summer employment\n• Income Summary – Automatic calculations of total available income for the semester\n\nExpense Management\n• Seme'
+  },
+  'Instagram_Toolkit_SEO.md': {
+    title: 'Instagram Content Planning Toolkit 50+ Templates - 2026 Edition',
+    tags: 'instagram content planner, social media planner, instagram templates, content calendar, hashtag strategy, social media toolkit, instagram analytics, content planning templates, brand guidelines, instagram growth, reel ideas, social media manager tools, instagram toolkit',
+    shortDesc: 'Plan 365 days of Instagram content with 50+ templates, hashtag strategy, analytics, and competitor analysis. 12 sheets, 643 formulas, Luxury Neutral design. Instant download.',
+    fullDesc: 'The Complete Instagram Content Management System\n\nTake your Instagram strategy from reactive to strategic with the Instagram Content Planning Toolkit—the all-in-one system designed for content creators, entrepreneurs, and social media managers who want consistent, high-performing Instagram presence.\n\nThis comprehensive Excel toolkit combines 50+ professionally designed templates with advanced planning and analytics tools. Featuring a luxury neutral warm brown design that looks as beautiful as it performs, manage your entire Instagram operation from content ideation to performance analysis.\n\nWhat\'s Included (12 Strategic Sheets)\n\nContent Planning & Strategy\n• Dashboard KPI – Visual overview of your Instagram performance metrics\n• Content Calendar – Full 365-day content planning with daily themes and scheduling\n• 45+ Post Templates – Seven categories of ready-to-use post designs:\n  - Educational Posts\n  - Promotional Posts\n  - Engagement-Focused Posts\n  - Story Announcements\n  - Behind-the-Scenes Content\n  - Customer Testimonials\n  - Holiday/Seasonal Posts\n\nHashtag & Growth Strategy\n• Hashtag Strategy Library – 500+ researched hashtags organized by category and '
+  },
+  'Etsy_Listing_SEO.md': {
+    title: 'Finance Hub Notion Template - Etsy Listing (SEO-Optimized 2026)',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Freelancer_Income_Tracker_SEO.md': {
+    title: 'Freelancer Income Tracker 2026 - SEO Listing',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Meal_Planner_SEO.md': {
+    title: 'Meal Planner & Grocery Budget 2026 - Weekly Meal Planning & Smart Shopping',
+    tags: 'meal planner, meal planning, grocery list, grocery budget, meal prep, weekly planner, recipe organizer, budget planner, nutrition tracker, shopping list, meal prep planner, food budget, weekly meal plan',
+    shortDesc: 'Plan weekly meals, generate organized grocery lists by category, and track food spending. 7 sheets, 106 formulas, recipe collection, nutrition tracking. Navy+Gold.',
+    fullDesc: 'Take Control of Meals, Grocery Shopping, and Food Spending\n\nThe average family wastes $1,500 annually on groceries due to poor planning and impulse purchases. The Meal Planner & Grocery Budget 2026 eliminates that waste while saving hours on meal planning and shopping.\n\nThis elegant Excel system combines strategic meal planning with intelligent budget tracking. Plan nutritious meals for the entire week, generate organized grocery lists by category, track spending, and never again scramble at 5 PM wondering what to cook. Simplify meals, reduce waste, and save money—all in one beautiful system.\n\nWhat\'s Included (7 Practical Sheets)\n\nMeal Planning & Organization\n• Meal Planning Dashboard – Weekly overview of all planned meals for breakfast, lunch, and dinner\n• Weekly Meal Planner – 7-day meal planning with recommended recipes and portion sizes\n• Recipe Collection – Organize 50+ favorite recipes with ingredients, instructions, and prep times\n• Meal Ideas Library – Browse 100+ meal suggestions by category (quick meals, family favorites, healthy options, budget meals)\n\nShopping & Budget\n• Grocery List Generator – Automatic list organized by store category (produce, meat, '
+  },
+  'Subscription_Manager_SEO.md': {
+    title: 'Subscription Manager 2026 - Track All Your Subscriptions & Save Money',
+    tags: 'subscription tracker, subscription manager, budget planner, expense tracker, financial planner, money saver, subscription analyzer, monthly planner, spending tracker, financial management, personal finance, subscription organizer, cost reduction',
+    shortDesc: 'Stop losing money to forgotten subscriptions. Track everything with auto-renewal alerts, savings analysis, and cost breakdown. 6 sheets, 105 formulas. Navy+Gold design.',
+    fullDesc: 'Stop Wasting Money on Forgotten Subscriptions\n\nThe average person spends $3,747 per year on subscriptions they don\'t use. That\'s over $300 per month disappearing without a trace. With the Subscription Manager 2026, identify, track, and eliminate subscription waste—reclaiming hundreds of dollars annually.\n\nThis elegant Excel tracker monitors every subscription: streaming services, software, memberships, apps, and recurring charges. Automatic renewal alerts ensure you never miss a cancellation date, while integrated savings analysis shows exactly where your money goes and how to optimize spending.\n\nWhat\'s Included (6 Efficient Sheets)\n\nSubscription Tracking\n• Dashboard – Visual overview of total annual spending and subscription breakdown\n• Active Subscriptions – Complete log of all subscriptions with monthly costs, renewal dates, and auto-renewal alerts\n• Subscription Details – Deep tracking for each subscription including login information, billing method, and usage notes\n\nFinancial Analysis\n• Cost Breakdown – Visualize spending by category (streaming, software, fitness, etc.)\n• Monthly Summary – Automatic calculations of total monthly and annual spending\n• Saving'
+  },
+  'Sports_Betting_Tracker_SEO.md': {
+    title: 'Sports Betting Tracker 2026 - SEO Optimized Etsy Listing',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Savings_Goal_Tracker_SEO.md': {
+    title: 'Savings Goal Tracker 2026 - Achieve Your Financial Goals with Precision',
+    tags: 'savings tracker, savings goals, financial goals, goal tracker, budget planner, money planner, personal finance, emergency fund, savings plan, goal planning, financial planning, money management, wealth building',
+    shortDesc: 'Visualize your savings journey with automatic progress tracking, monthly summaries, and goal completion projections. 6 sheets, 178 formulas, demo goals included. Navy+Gold.',
+    fullDesc: 'Turn Your Savings Dreams Into Reality\n\nWhether you\'re saving for a dream vacation, home down payment, emergency fund, or wedding, the Savings Goal Tracker 2026 transforms vague aspirations into concrete, achievable financial targets with automatic tracking and monthly progress updates.\n\nThis elegant Excel tool makes saving tangible. Watch your progress grow with each deposit, understand exactly how long until you reach your goal, and stay motivated with visual progress tracking and automatic milestones. Stop saving randomly—start saving strategically.\n\nWhat\'s Included (6 Complete Sheets)\n\nGoal Management & Tracking\n• Goals Dashboard – Visual overview of all active savings goals with progress bars\n• Savings Goals Setup – Define up to 20 savings goals with target amounts, timelines, and priorities\n• Monthly Deposits Log – Track every deposit across all goals with easy date and amount entry\n• Goal Details – Deep tracking for each goal including why it matters, priority level, and completion date\n\nProgress & Projections\n• Monthly Summary – Automatic calculations showing progress toward each goal this month\n• Goal Completion Projections – Intelligent forecasting shows '
+  },
+  'Debt_Payoff_Tracker_SEO.md': {
+    title: 'Debt Payoff Tracker & Calculator 2026 - SEO Listing',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'PlanCraft_Bundles_SEO.md': {
+    title: 'PlanCraft Digital Art - Product Bundles with SEO Optimization',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Notion_Life_OS_SEO.md': {
+    title: 'Life OS Dashboard 2026 - All-in-One Life Planner & Personal Operating System',
+    tags: 'life planner, life operating system, daily planner, habit tracker, budget planner, financial planner, goal tracker, wellness planner, productivity planner, life dashboard, yearly planner, personal planner, life organization',
+    shortDesc: 'Transform your life with Life OS Dashboard 2026—15 integrated sheets, 1415 formulas, 6 life scores, OKRs, habits, finance, health, relationships. Dark Elegance gold design.',
+    fullDesc: 'Your Complete Life Operating System\n\nStop compartmentalizing your life. Introducing the Life OS Dashboard 2026—the ultimate personal operating system that integrates goals, finances, health, relationships, and personal growth into one unified, beautifully designed platform.\n\nThis isn\'t just a planner. It\'s a complete life management system designed for ambitious individuals who want to optimize every dimension of their life simultaneously. With 1415 intelligent formulas and 15 interconnected sheets, you\'ll have unprecedented clarity, control, and capability to design the life you actually want.\n\nWhat\'s Included (15 Comprehensive Sheets)\n\nLife Vision & Goals\n• Life Dashboard – Six life dimension scores (Career, Finance, Health, Relationships, Personal Growth, Wellness) with visual analytics\n• Vision Board – Eight life areas with integrated 1-year, 3-year, and 5-year goals with progress tracking\n• Quarterly OKRs – Align quarterly objectives and key results with your annual vision\n• Weekly Review – 52 weekly reflection and planning sessions with achievement summaries\n\nDaily Living & Habits\n• Daily Planner – Full 365-day daily planning with time blocking and task man'
+  },
+  'Small_Business_Tracker_SEO.md': {
+    title: 'Small Business Tracker 2026 - SEO Optimized Etsy Listing',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Investment_Portfolio_SEO.md': {
+    title: 'Investment Portfolio Tracker 2026 - Professional Portfolio Management & Analysis',
+    tags: 'investment tracker, portfolio tracker, stock tracker, crypto tracker, investment portfolio, financial planning, asset allocation, dividend tracker, portfolio analysis, wealth management, investment management, financial tracker, trading journal',
+    shortDesc: 'Track stocks, ETFs, crypto with professional analytics. Transaction log, dividends tracker, performance analysis, rebalancing calculator. 7 sheets, 205 formulas. Navy+Gold.',
+    fullDesc: 'Build & Manage Your Investment Portfolio Like a Professional\n\nWhether you\'re building your first investment portfolio or managing a sophisticated multi-asset strategy, the Investment Portfolio Tracker 2026 provides institutional-grade analytics in an elegant, easy-to-use Excel system.\n\nTrack stocks, ETFs, bonds, cryptocurrency, and alternative investments all in one place. Watch your portfolio grow with real-time valuation, performance analysis, dividend tracking, and professional rebalancing tools. Stop managing investments in scattered apps and spreadsheets—bring everything into one integrated system.\n\nWhat\'s Included (7 Professional Sheets)\n\nPortfolio Overview & Management\n• Portfolio Dashboard – Real-time view of total portfolio value, asset allocation, and key metrics\n• Holdings Tracker – Monitor up to 15 stocks, ETFs, crypto, or other holdings with purchase prices, quantities, and current values\n• Asset Allocation – Visual breakdown of portfolio composition by asset class and sector\n\nTransaction & Income Tracking\n• Transactions Log – Complete record of all buys, sells, and trades with automatic cost basis calculations\n• Dividends & Income Tracker – Track divi'
+  },
+  'Habit_Tracker_SEO.md': {
+    title: 'Habit Tracker 2026 - SEO Listing',
+    tags: '',
+    shortDesc: '',
+    fullDesc: ''
+  },
+  'Digital_Planner_SEO.md': {
+    title: 'Digital Planner 2026 - Complete Life Organization System',
+    tags: 'digital planner 2026, life planner, yearly planner, monthly planner, weekly planner, daily planner, habit tracker, budget planner, fitness tracker, meal planner, goal tracker, productivity planner, excel planner',
+    shortDesc: 'Master your life with our comprehensive Digital Planner 2026. 15 interactive sheets with 280 formulas. Navy+Gold design. Instant download, no macros needed.',
+    fullDesc: 'Your All-in-One Digital Life Companion\n\nTake control of every aspect of your life with the PlanCraft Digital Planner 2026—the ultimate productivity and organization tool designed for ambitious individuals who demand more from their planning system.\n\nThis professionally designed Excel planner combines elegant Navy and Gold aesthetics with powerful functionality, giving you everything you need to track goals, habits, finances, health, and wellness in one beautiful, intuitive platform.\n\nWhat\'s Included (15 Comprehensive Sheets)\n\nPersonal & Goals Management\n• Dashboard – At-a-glance overview of your life metrics\n• Yearly Goals – Organize 12 categories of annual objectives with progress tracking\n• Quarterly Planning – Break down yearly goals into actionable quarterly milestones\n• Monthly Planner – Full 365-day monthly breakdown with planning space\n• Weekly Planner – 52 weeks of structured weekly planning with daily breakdown\n• Daily Habits – Track up to 15 daily habits across all 365 days with streak counters\n• Projects & Tasks – Manage up to 50 active projects with task prioritization\n\nFinancial Management\n• Budget Planner – 15 spending categories tracked across 12 m'
+  },
+};
+
+// ============ COPY TO CLIPBOARD ============
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Скопировано!';
+    btn.style.background = '#22C55E';
+    btn.style.color = '#fff';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 1500);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const orig = btn.textContent;
+    btn.textContent = '✓ Скопировано!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+// ============ DELETE PRODUCT ============
+function deleteProduct(id) {
+  const p = products.find(pr => pr.id === id);
+  if (!p) return;
+  if (!confirm('Удалить продукт "' + p.name + '"? Это действие нельзя отменить.')) return;
+  const idx = products.findIndex(pr => pr.id === id);
+  if (idx > -1) {
+    products.splice(idx, 1);
+    const activeBtn = document.querySelector('.filter-btn.active[data-cat-filter]');
+    renderCatalog(activeBtn ? activeBtn.dataset.catFilter : 'all');
+  }
+}
+
+</script>
+</body>
+</html>
