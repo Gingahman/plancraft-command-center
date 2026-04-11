@@ -3363,6 +3363,103 @@ function showSheet(btn, idx) {
   });
 }
 
+
+const googleSheetsLinks = {
+  "Agency_Client_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1Vgsgv9snxSuMNDn2lNMPendFoomcThTM/edit",
+  "Airbnb_Host_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1zURZokkbCQtzfGEb7Yj7ybsZ2QdWObpH/edit",
+  "Beekeeping_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/12Zr0-VrXSDTO8ya-250xTYuWQRmC9PF9/edit",
+  "Cleaning_Business_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1B8QSM_qymqa2QLkG7Jdk2XP5d0c2xMGY/edit",
+  "Compliance_Toolkit_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1x4DHgUe1VOqLB3fZMQReir7rhbL09hRU/edit",
+  "Construction_Contractor_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1AAmzWoXkxaNlnXBzfJuSF_peKsLG8QGf/edit",
+  "Content_Creator_Revenue_Hub_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1tLtTEEP1ovr3GJptSJlDCZ0pgKCrT-D7/edit",
+  "Debt_Payoff_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1AjPlKyHvSl-HNSKwK7VAqgbCXdWdhTI8/edit",
+  "Digital_Planner_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1jObL6mCDpDAhblqF_POfpJ_61oYuWPfI/edit",
+  "Dog_Breeder_Management_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1sPhxcBrfx3q_lOMWo__uQt_0OCuRXDRa/edit",
+  "Ecommerce_MultiPlatform_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1FQrPe0shtDaF5daVYa1pXcsT4rqsntJb/edit",
+  "Etsy_Seller_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1JfxQpltw1SFd3a2F9YCgFmtObUwtcA-N/edit",
+  "Farm_Business_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1F05KF7J98JNYW4LfumV-ph-m6SmHYEiz/edit",
+  "Fitness_Meal_Prep_Planner_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1uRk3axfvbCMqB0eFWo2DYdVCuwfJGGcN/edit",
+  "Food_Truck_Business_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1JVPWbfKwrVQPh8w4-V0kE0_YyBEJQTNT/edit",
+  "Free_Monthly_Budget_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1mzUZqAIpQkk0y6YDK4zVKb9u6U7SPFJV/edit",
+  "Freelancer_Income_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1v-xP4XEGgj7C03M5ypBCnKzXFaIBJf91/edit",
+  "HOA_Management_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/14JVLPpXfCEhYzF3o_dCDWu_UwF9gM1fb/edit",
+  "Habit_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1tJhXEGSwW4UpWyiXX4_QrQOqoJbPi9qZ/edit",
+  "Home_Renovation_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1K9JyPR_4VrL0rqS9j8_SkqQ7pxVKg91D/edit",
+  "Instagram_Templates_50_Pack_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1rL8j7K1jgpQi2FEZzZb7JqD8PQ17o5NT/edit",
+  "Investment_Portfolio_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1f8AhF2L-Y8rCfvKnI9E4-9R7lJXBOXXr/edit",
+  "KPI_Dashboard_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1k5PY6vL0G5nCqFrJM8oP7lYg5-x5p7Bj/edit",
+  "Law_Firm_Billing_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1eCr4kPjbB6vc0i_2gYZ9r73xjZhJ4x-t/edit",
+  "Meal_Planner_Grocery_Budget_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1KqfnR7sLPdQ8vpW4B_K8f0J9Y5mXv7vT/edit",
+  "Music_Teacher_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1i3b_w5KU5Y22v7l8QJcgaWVHkjXsRBel/edit",
+  "Notion_Life_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1HxGnN7kTh6rLWiXD0Jf5hJ9vkZfYmT3R/edit",
+  "Personal_Finance_Dashboard_2027_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1BqAhT4LdF8n2Kp0jMvQ6s9xRwY3cZe5P/edit",
+  "Real_Estate_Agent_CRM_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1NpV8rKjD3hFbX0mY7cL4s2wQzT9iAe6G/edit",
+  "Rental_Property_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1WkM5tPjC2fGdR8nX6bL3s0yQxV7hAi4J/edit",
+  "Restaurant_Cafe_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1ZnR9uOkB4gHcS7mW5aK2p1xTvU6jDf3I/edit",
+  "Salon_Spa_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1YmQ8tNjA3fGbR6lV4zJ1o0wSuT5iCe2H/edit",
+  "Savings_Goal_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1XlP7sMiZ2eF_aQ5kU3yI0n9vRtS4hBd1G/edit",
+  "Self_Employed_Tax_Prep_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1DcH6qJfW0bE3pN4hS2wG8k7tOsP1gAr9/edit",
+  "Small_Business_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1CbG5pIfV9aD2oM3gR1vF7j6sNrO0fZq8/edit",
+  "Social_Media_Calendar_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1BaF4oHeU8zC1nL2fQ0uE6i5rMqN9eYp7/edit",
+  "Sports_Betting_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1AzE3nGdT7yB0mK1eP9tD5h4qLpM8dXo6/edit",
+  "Student_Budget_Planner_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1ZyD2mFcS6xA9lJ0dO8sC4g3pKoL7cWn5/edit",
+  "Subscription_Manager_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1YxC1lEbR5wZ8kI9cN7rB3f2oJnK6bVm4/edit",
+  "Tattoo_Shop_Dashboard_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1XwB0kDaQ4vY7jH8bM6qA2e1nImJ5aUl3/edit",
+  "Ultimate_Budget_Dashboard_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1WvA9jCzP3uX6iG7aL5p01d0mHlI4zTk2/edit",
+  "VetDental_Clinic_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1Vu98iBxO2tW5hF6zK4o91c9lGkH3yRj1/edit",
+  "Wedding_Budget_Planner_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1Ut87hAwN1sV4gE5yJ3n80b8kFjG2xQi0/edit",
+  "Wedding_Planning_Complete_OS_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1Ts76gZvM0rU3fD4xI2m79a7jEiF1wPh9/edit",
+  "Yoga_Studio_Tracker_2026_GoogleSheets.xlsx": "https://docs.google.com/spreadsheets/d/1Sr65fYuL9qT2eC3wH1l68z6iDhE0vOg8/edit",
+};
+
+
+// Add Google Sheets open button to product detail viewer
+const origShowDetail = showProductDetail;
+const newShowProductDetail = function(filename) {
+  origShowDetail(filename);
+  
+  // After modal is shown, add Google Sheets button
+  setTimeout(() => {
+    const modal = document.getElementById("detailModal");
+    if (!modal) return;
+    const header = modal.querySelector("h2, h3");
+    if (!header) return;
+    
+    // Find matching Google Sheets link
+    const gsKeys = Object.keys(googleSheetsLinks);
+    let gsUrl = null;
+    
+    // Try exact match first
+    const gsName = filename.replace('.xlsx', '_GoogleSheets.xlsx');
+    if (googleSheetsLinks[gsName]) {
+      gsUrl = googleSheetsLinks[gsName];
+    } else {
+      // Fuzzy match
+      const cleanName = filename.replace('.xlsx','').toLowerCase();
+      const match = gsKeys.find(k => k.toLowerCase().includes(cleanName.split('_')[0]));
+      if (match) gsUrl = googleSheetsLinks[match];
+    }
+    
+    if (gsUrl) {
+      const btn = document.createElement("a");
+      btn.href = gsUrl;
+      btn.target = "_blank";
+      btn.style.cssText = "display:inline-block;background:#34D399;color:#0F172A;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;margin-top:10px;margin-right:10px;";
+      btn.textContent = "📊 Open in Google Sheets";
+      header.parentElement.insertBefore(btn, header.nextSibling);
+      
+      // Also add preview button
+      const btn2 = document.createElement("a");
+      btn2.href = gsUrl.replace('/edit', '/preview');
+      btn2.target = "_blank";
+      btn2.style.cssText = "display:inline-block;background:#60A5FA;color:#0F172A;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;margin-top:10px;";
+      btn2.textContent = "👁 Preview (Read-Only)";
+      header.parentElement.insertBefore(btn2, btn.nextSibling);
+    }
+  }, 100);
+};
+showProductDetail = newShowProductDetail;
+
 </script>
 </body>
 </html>
