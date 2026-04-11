@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Property Management System - Product Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #1B2A4A;
+            --navy-dark: #0f1823;
+            --gold: #D4AF37;
+            --white: #FFFFFF;
+            --soft-blue: #4A6FA5;
+            --light-gray: #F5F5F5;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--light-gray);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 2100px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 12px 24px;
+            background: var(--navy);
+            color: var(--white);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .controls button:hover {
+            background: var(--gold);
+            color: var(--navy);
+            transform: translateY(-2px);
+        }
+
+        .controls button.active {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .slide {
+            width: 2000px;
+            height: 2000px;
+            display: none;
+            margin: 0 auto 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* SLIDE 1 - HERO */
+        .slide-1 {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-1::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .slide-1::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(74, 111, 165, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .hero-title {
+            font-size: 96px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.2;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 48px;
+            color: var(--soft-blue);
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-icons {
+            font-size: 80px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy);
+            padding: 24px 48px;
+            border-radius: 12px;
+            font-size: 44px;
+            font-weight: 700;
+            margin: 40px auto 0;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .hero-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        .badge-text {
+            font-size: 28px;
+            color: var(--white);
+            opacity: 0.8;
+        }
+
+        /* SLIDE 2 - WHATS INCLUDED */
+        .slide-2 {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            flex-direction: column;
+            padding: 100px;
+            gap: 60px;
+        }
+
+        .slide-title {
+            text-align: center;
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .tabs-header {
+            text-align: center;
+            font-size: 36px;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .tabs-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .tab-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tab-card:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-8px);
+        }
+
+        .tab-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .tab-name {
+            font-size: 28px;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .tabs-footer {
+            text-align: center;
+            font-size: 40px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* SLIDE 3 - KEY FEATURES */
+        .slide-3 {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            flex-direction: column;
+            padding: 100px;
+            gap: 80px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(74, 111, 165, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .feature-icon {
+            font-size: 72px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 36px;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .feature-description {
+            font-size: 28px;
+            color: var(--soft-blue);
+            font-weight: 300;
+            line-height: 1.4;
+        }
+
+        /* SLIDE 4 - COST COMPARISON */
+        .slide-4 {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            flex-direction: column;
+            padding: 100px;
+            justify-content: space-between;
+        }
+
+        .comparison-title {
+            text-align: center;
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 80px;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 80px;
+            flex: 1;
+            align-items: center;
+        }
+
+        .comparison-card {
+            background: linear-gradient(135deg, rgba(74, 111, 165, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .comparison-card.featured {
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+            transform: scale(1.05);
+        }
+
+        .comparison-service {
+            font-size: 32px;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .comparison-cost {
+            font-size: 48px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .comparison-note {
+            font-size: 26px;
+            color: var(--soft-blue);
+            font-weight: 300;
+        }
+
+        .savings-callout {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.15) 0%, rgba(50, 150, 50, 0.1) 100%);
+            border: 3px solid rgba(81, 207, 102, 0.4);
+            border-radius: 16px;
+        }
+
+        .savings-text {
+            font-size: 48px;
+            color: #51cf66;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .savings-detail {
+            font-size: 32px;
+            color: var(--white);
+        }
+
+        /* SLIDE 5 - WHO ITS FOR */
+        .slide-5 {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            flex-direction: column;
+            padding: 100px;
+            justify-content: space-between;
+        }
+
+        .who-title {
+            text-align: center;
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 60px;
+        }
+
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 80px;
+            flex: 1;
+        }
+
+        .audience-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(74, 111, 165, 0.1) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audience-name {
+            font-size: 36px;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .cta-text {
+            font-size: 36px;
+            color: var(--soft-blue);
+            font-weight: 300;
+        }
+
+        .cta-highlight {
+            color: var(--gold);
+            font-weight: 700;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .slide-indicator {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: var(--navy);
+            color: var(--white);
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            border: 2px solid var(--gold);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <button class="slide-btn active" data-slide="1">Hero</button>
+            <button class="slide-btn" data-slide="2">What's Included</button>
+            <button class="slide-btn" data-slide="3">Key Features</button>
+            <button class="slide-btn" data-slide="4">Cost Comparison</button>
+            <button class="slide-btn" data-slide="5">Who It's For</button>
+        </div>
+
+        <!-- SLIDE 1: HERO -->
+        <div class="slide slide-1 active">
+            <div class="hero-content">
+                <div>
+                    <h1 class="hero-title">Rental Property<br>Management System</h1>
+                    <p class="hero-subtitle">Professional Portfolio Management for Landlords</p>
+                </div>
+                <div class="hero-icons">🏠👤💰📊🔧</div>
+                <div class="hero-badge">$129 — Instant Download</div>
+            </div>
+            <div class="hero-footer">
+                <div class="logo-text">PLANCRAFT</div>
+                <div class="badge-text">Digital Art</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: WHATS INCLUDED -->
+        <div class="slide slide-2">
+            <h2 class="slide-title">16 Professional Spreadsheet Tabs</h2>
+            <div class="tabs-grid">
+                <div class="tab-card">
+                    <span class="tab-icon">📊</span>
+                    <div class="tab-name">Portfolio Dashboard</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">🏠</span>
+                    <div class="tab-name">Property Database</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">👤</span>
+                    <div class="tab-name">Tenant Directory</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">💵</span>
+                    <div class="tab-name">Rent Roll</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">💰</span>
+                    <div class="tab-name">Expense Tracker</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">📈</span>
+                    <div class="tab-name">Property P&L</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">📊</span>
+                    <div class="tab-name">ROI Calculator</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">🔧</span>
+                    <div class="tab-name">Maintenance Requests</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">📋</span>
+                    <div class="tab-name">Lease Tracker</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">📝</span>
+                    <div class="tab-name">Tax Preparation</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">💳</span>
+                    <div class="tab-name">Cash Flow Projection</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">✓</span>
+                    <div class="tab-name">Move-In/Out Checklist</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">🏦</span>
+                    <div class="tab-name">Mortgage Tracker</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">🔍</span>
+                    <div class="tab-name">Market Comparison</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">⚙️</span>
+                    <div class="tab-name">Settings</div>
+                </div>
+                <div class="tab-card">
+                    <span class="tab-icon">📖</span>
+                    <div class="tab-name">Instructions</div>
+                </div>
+            </div>
+            <div class="tabs-footer">468 Built-in Formulas • Complete Automation</div>
+        </div>
+
+        <!-- SLIDE 3: KEY FEATURES -->
+        <div class="slide slide-3">
+            <h2 class="slide-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">Portfolio Dashboard</h3>
+                    <p class="feature-description">Total NOI, vacancy rates, cash flow at a glance</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📈</span>
+                    <h3 class="feature-title">ROI Calculator</h3>
+                    <p class="feature-description">Cap Rate, GRM, Cash-on-Cash, 1% Rule metrics</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💰</span>
+                    <h3 class="feature-title">Rent Roll</h3>
+                    <p class="feature-description">Monthly collection with color-coded status</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💵</span>
+                    <h3 class="feature-title">Mortgage Tracker</h3>
+                    <p class="feature-description">PMT amortization schedules pre-calculated</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🧾</span>
+                    <h3 class="feature-title">Tax Prep</h3>
+                    <p class="feature-description">Schedule E, 27.5-year depreciation built in</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📋</span>
+                    <h3 class="feature-title">Lease Tracker</h3>
+                    <p class="feature-description">Expiration alerts & renewal status tracking</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: COST COMPARISON -->
+        <div class="slide slide-4">
+            <h2 class="comparison-title">Save Time & Money</h2>
+            <div class="comparison-container">
+                <div class="comparison-card">
+                    <div class="comparison-service">Buildium</div>
+                    <div class="comparison-cost">$624+</div>
+                    <div class="comparison-note">per year</div>
+                    <div class="comparison-note">$52+/mo subscription</div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-service">AppFolio</div>
+                    <div class="comparison-cost">$1,344+</div>
+                    <div class="comparison-note">per year (80 units)</div>
+                    <div class="comparison-note">$1.40/unit/mo</div>
+                </div>
+                <div class="comparison-card featured">
+                    <div class="comparison-service">PlanCraft System</div>
+                    <div class="comparison-cost">$129</div>
+                    <div class="comparison-note">one time</div>
+                    <div class="comparison-note">Lifetime access</div>
+                </div>
+            </div>
+            <div class="savings-callout">
+                <div class="savings-text">Save $495-1,215+ per year</div>
+                <div class="savings-detail">Professional management, one price</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: WHO ITS FOR -->
+        <div class="slide slide-5">
+            <h2 class="who-title">Perfect For Landlords</h2>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <div class="audience-name">Self-Managing Landlords</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-name">Real Estate Investors</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-name">Small Property Managers</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-name">New Landlords</div>
+                </div>
+            </div>
+            <div class="cta-section">
+                <p class="cta-text">Excel & Google Sheets Compatible</p>
+                <span class="cta-highlight">Instant Download • Lifetime Access</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-indicator"><span class="current">1</span> / 5</div>
+
+    <script>
+        const slideBtns = document.querySelectorAll('.slide-btn');
+        const slides = document.querySelectorAll('.slide');
+        const indicator = document.querySelector('.slide-indicator .current');
+        let currentSlide = 1;
+
+        function showSlide(num) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slideBtns.forEach(btn => btn.classList.remove('active'));
+
+            slides[num - 1].classList.add('active');
+            slideBtns[num - 1].classList.add('active');
+            indicator.textContent = num;
+            currentSlide = num;
+        }
+
+        slideBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                showSlide(parseInt(btn.dataset.slide));
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSlide < 5) showSlide(currentSlide + 1);
+            if (e.key === 'ArrowLeft' && currentSlide > 1) showSlide(currentSlide - 1);
+        });
+    </script>
+</body>
+</html>

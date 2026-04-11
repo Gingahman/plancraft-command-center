@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etsy Seller Operations System - PlanCraft</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1B2A4A 0%, #2D3E5F 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 2000px;
+            height: 2000px;
+            max-width: 100vw;
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slides {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            padding: 80px;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Slide 1 - Hero */
+        .slide-1 {
+            background: linear-gradient(135deg, #1B2A4A 0%, #4A6FA5 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 80px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 60px;
+            color: #D4AF37;
+            line-height: 1.3;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: #D4AF37;
+            color: #1B2A4A;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 56px;
+            font-weight: 600;
+            margin-bottom: 60px;
+        }
+
+        .icon-row {
+            font-size: 80px;
+            letter-spacing: 20px;
+            margin-top: 40px;
+        }
+
+        /* Slide 2 - What's Included */
+        .slide-2 {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0F4F8 100%);
+            color: #1B2A4A;
+            padding: 80px 100px;
+        }
+
+        .slide-title {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .subtitle-small {
+            font-size: 40px;
+            color: #D4AF37;
+            text-align: center;
+            margin-bottom: 80px;
+            font-weight: 600;
+        }
+
+        .tabs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .tab-item {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(27, 42, 74, 0.1);
+            border-top: 4px solid #D4AF37;
+        }
+
+        .tab-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .tab-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1B2A4A;
+        }
+
+        /* Slide 3 - Features */
+        .slide-3 {
+            background: linear-gradient(135deg, #1B2A4A 0%, #4A6FA5 100%);
+            color: white;
+            padding: 80px 100px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #D4AF37;
+            padding: 50px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+        }
+
+        .feature-name {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .feature-desc {
+            font-size: 24px;
+            font-weight: 300;
+            line-height: 1.4;
+            color: #E8E8E8;
+        }
+
+        /* Slide 4 - Fee Breakdown */
+        .slide-4 {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0F4F8 100%);
+            color: #1B2A4A;
+            padding: 80px 100px;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 80px;
+            gap: 40px;
+        }
+
+        .flow-box {
+            background: white;
+            border: 3px solid #D4AF37;
+            padding: 50px 40px;
+            border-radius: 12px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 8px 24px rgba(27, 42, 74, 0.1);
+        }
+
+        .flow-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .flow-label {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1B2A4A;
+        }
+
+        .flow-arrow {
+            font-size: 48px;
+            color: #D4AF37;
+            align-self: center;
+        }
+
+        .cta-message {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: #1B2A4A;
+            margin-top: 40px;
+        }
+
+        /* Slide 5 - Who It's For */
+        .slide-5 {
+            background: linear-gradient(135deg, #1B2A4A 0%, #4A6FA5 100%);
+            color: white;
+            padding: 80px 100px;
+        }
+
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            margin-bottom: 80px;
+        }
+
+        .audience-card {
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid #D4AF37;
+            padding: 50px 40px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .audience-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .audience-text {
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #D4AF37 0%, #E5C158 100%);
+            color: #1B2A4A;
+            border: none;
+            padding: 30px 80px;
+            font-size: 32px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 12px 32px rgba(212, 175, 55, 0.3);
+            display: block;
+            margin: 40px auto 0;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Navigation */
+        .nav-container {
+            background: #1B2A4A;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: #D4AF37;
+            color: #1B2A4A;
+            border: none;
+            padding: 12px 32px;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #E5C158;
+            transform: scale(1.05);
+        }
+
+        .slide-indicator {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:disabled:hover {
+            transform: none;
+            background: #D4AF37;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                width: 100vw;
+                height: auto;
+                aspect-ratio: auto;
+            }
+
+            .slide {
+                position: relative;
+                width: 100%;
+                min-height: 100vh;
+            }
+
+            .hero-title {
+                font-size: 48px;
+            }
+
+            .hero-subtitle {
+                font-size: 32px;
+            }
+
+            .slide-title {
+                font-size: 40px;
+            }
+
+            .tabs-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .audience-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="slides">
+            <!-- Slide 1: Hero -->
+            <div class="slide slide-1 active">
+                <div class="hero-title">Etsy Seller Operations System</div>
+                <div class="hero-subtitle">Track Every Sale, Fee & Profit in One Place</div>
+                <div class="price-badge">$99</div>
+                <div class="icon-row">📊 📦 💰 ⭐ 🎯</div>
+            </div>
+
+            <!-- Slide 2: What's Included -->
+            <div class="slide slide-2">
+                <div class="slide-title">What's Included</div>
+                <div class="subtitle-small">18 Tabs • 843 Built-in Formulas</div>
+                <div class="tabs-grid">
+                    <div class="tab-item"><div class="tab-icon">📊</div><div class="tab-name">Dashboard</div></div>
+                    <div class="tab-item"><div class="tab-icon">📦</div><div class="tab-name">Inventory</div></div>
+                    <div class="tab-item"><div class="tab-icon">💰</div><div class="tab-name">Pricing</div></div>
+                    <div class="tab-item"><div class="tab-icon">📈</div><div class="tab-name">Sales Analytics</div></div>
+                    <div class="tab-item"><div class="tab-icon">💳</div><div class="tab-name">Fee Calc</div></div>
+                    <div class="tab-item"><div class="tab-icon">🎯</div><div class="tab-name">SEO Tracker</div></div>
+                    <div class="tab-item"><div class="tab-icon">📅</div><div class="tab-name">Calendar</div></div>
+                    <div class="tab-item"><div class="tab-icon">📢</div><div class="tab-name">Marketing</div></div>
+                    <div class="tab-item"><div class="tab-icon">🏆</div><div class="tab-name">Performance</div></div>
+                    <div class="tab-item"><div class="tab-icon">⭐</div><div class="tab-name">Reviews</div></div>
+                    <div class="tab-item"><div class="tab-icon">👥</div><div class="tab-name">Customers</div></div>
+                    <div class="tab-item"><div class="tab-icon">📋</div><div class="tab-name">Reports</div></div>
+                    <div class="tab-item"><div class="tab-icon">🔔</div><div class="tab-name">Alerts</div></div>
+                    <div class="tab-item"><div class="tab-icon">💡</div><div class="tab-name">Ideas</div></div>
+                    <div class="tab-item"><div class="tab-icon">🎨</div><div class="tab-name">Branding</div></div>
+                    <div class="tab-item"><div class="tab-icon">📞</div><div class="tab-name">Support</div></div>
+                    <div class="tab-item"><div class="tab-icon">⚙️</div><div class="tab-name">Settings</div></div>
+                    <div class="tab-item"><div class="tab-icon">📚</div><div class="tab-name">Guides</div></div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Features -->
+            <div class="slide slide-3">
+                <div class="slide-title" style="margin-bottom: 80px;">Core Features</div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">💳</div>
+                        <div class="feature-name">Fee Calculator</div>
+                        <div class="feature-desc">Exact Etsy fees calculated automatically for each sale</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-name">SEO Tracker</div>
+                        <div class="feature-desc">Monitor keyword rankings and listing visibility</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-name">Sales Analytics</div>
+                        <div class="feature-desc">Real-time insights into sales trends and patterns</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📦</div>
+                        <div class="feature-name">Inventory Manager</div>
+                        <div class="feature-desc">Track stock, reorder levels, and product costs</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📢</div>
+                        <div class="feature-name">Marketing Planner</div>
+                        <div class="feature-desc">Plan campaigns and track promotional ROI</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-name">Auto Monthly Report</div>
+                        <div class="feature-desc">Automated profit & loss reporting at month-end</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Fee Breakdown -->
+            <div class="slide slide-4">
+                <div class="slide-title" style="margin-bottom: 80px;">Know Your Real Profit</div>
+                <div class="flow-container">
+                    <div class="flow-box">
+                        <div class="flow-icon">💵</div>
+                        <div class="flow-label">Listing Fee</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">
+                        <div class="flow-icon">🛍️</div>
+                        <div class="flow-label">Transaction Fee</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">
+                        <div class="flow-icon">💳</div>
+                        <div class="flow-label">Payment Fee</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">
+                        <div class="flow-icon">📢</div>
+                        <div class="flow-label">Offsite Ads</div>
+                    </div>
+                </div>
+                <div class="cta-message">💰 Stop Guessing. Know Exactly What You Keep.</div>
+            </div>
+
+            <!-- Slide 5: Who It's For -->
+            <div class="slide slide-5">
+                <div class="slide-title" style="margin-bottom: 80px;">Who It's For</div>
+                <div class="audience-grid">
+                    <div class="audience-card">
+                        <div class="audience-icon">🚀</div>
+                        <div class="audience-text">New Sellers</div>
+                    </div>
+                    <div class="audience-card">
+                        <div class="audience-icon">📈</div>
+                        <div class="audience-text">Growing Shops</div>
+                    </div>
+                    <div class="audience-card">
+                        <div class="audience-icon">🎯</div>
+                        <div class="audience-text">Multi-Product Stores</div>
+                    </div>
+                    <div class="audience-card">
+                        <div class="audience-icon">💻</div>
+                        <div class="audience-text">Digital Product Sellers</div>
+                    </div>
+                </div>
+                <button class="cta-button">Get Etsy Seller OS</button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-indicator"><span id="currentSlide">1</span> / 5</span>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 5;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

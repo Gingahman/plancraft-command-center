@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Restaurant & Cafe OS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(135deg,#0F172A,#1E293B);font-family:system-ui,sans-serif;color:#E2E8F0;width:1200px;height:800px;overflow:hidden;padding:40px}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:12px}.logo-icon{width:40px;height:40px;background:#D4AF37;display:flex;align-items:center;justify-content:center;font-weight:800;color:#0F172A;border-radius:8px;font-size:18px}.brand{font-size:14px;color:#94A3B8;letter-spacing:1px}
+h1{font-size:28px;font-weight:700;margin-bottom:4px}h1 span{color:#D4AF37}.sub{color:#94A3B8;font-size:14px;margin-bottom:8px}
+.badge-row{display:flex;gap:10px;margin-bottom:24px}.badge{background:#422006;color:#D4AF37;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(212,175,55,0.3)}.badge.hot{background:#4C0519;color:#F87171;border-color:rgba(248,113,113,0.3)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:#1E293B;border:1px solid #475569;border-radius:12px;padding:16px;text-align:center}
+.kpi-label{color:#94A3B8;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.kpi-value{font-size:24px;font-weight:700;color:#D4AF37}
+.kpi-sub{color:#64748B;font-size:10px;margin-top:3px}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.feat{background:#1E293B;border:1px solid #475569;border-radius:10px;padding:14px;text-align:center}
+.feat-icon{font-size:24px;margin-bottom:6px;display:block}.feat-name{font-size:12px;font-weight:600;color:#CBD5E1;margin-bottom:3px}.feat-desc{font-size:10px;color:#64748B}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:20px}
+.tab{background:#334155;padding:4px 10px;border-radius:6px;font-size:10px;color:#94A3B8;border:1px solid #475569}.tab.gold{background:#422006;color:#D4AF37;border-color:rgba(212,175,55,0.3)}
+.bottom-bar{background:#1E293B;border:1px solid #475569;border-radius:12px;padding:12px 24px;display:flex;justify-content:center;gap:28px;font-size:12px;color:#94A3B8}.bottom-bar span{color:#34D399}
+</style></head><body>
+<div class="logo"><div class="logo-icon">PC</div><div class="brand">PLANCRAFT</div></div>
+<h1>Restaurant & Cafe Business OS <span>2026</span></h1>
+<div class="sub">Complete restaurant management — sales, menu costing, inventory, staff, P&L</div>
+<div class="badge-row"><div class="badge">569 Formulas</div><div class="badge">16 Tabs</div><div class="badge">Excel + Google Sheets</div><div class="badge hot">🔥 ZERO Competition on Etsy</div></div>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-label">Monthly Revenue</div><div class="kpi-value">$86,000</div><div class="kpi-sub">All channels combined</div></div>
+  <div class="kpi"><div class="kpi-label">Food Cost %</div><div class="kpi-value" style="color:#34D399">28.4%</div><div class="kpi-sub">Target: 30%</div></div>
+  <div class="kpi"><div class="kpi-label">Labor Cost %</div><div class="kpi-value">27.8%</div><div class="kpi-sub">Target: 30%</div></div>
+  <div class="kpi"><div class="kpi-label">Net Profit</div><div class="kpi-value" style="color:#34D399">$12,400</div><div class="kpi-sub">14.4% margin</div></div>
+</div>
+<div class="features">
+  <div class="feat"><span class="feat-icon">🍽️</span><div class="feat-name">Daily Sales</div><div class="feat-desc">4 channels: dine-in, takeout, delivery, catering</div></div>
+  <div class="feat"><span class="feat-icon">📋</span><div class="feat-name">Menu Costing</div><div class="feat-desc">30 items with auto food cost % & recommended price</div></div>
+  <div class="feat"><span class="feat-icon">📦</span><div class="feat-name">Inventory</div><div class="feat-desc">Auto alerts: OK / LOW / CRITICAL with reorder levels</div></div>
+  <div class="feat"><span class="feat-icon">👨‍🍳</span><div class="feat-name">Staff Schedule</div><div class="feat-desc">10 employees, weekly shifts, auto labor cost %</div></div>
+  <div class="feat"><span class="feat-icon">📊</span><div class="feat-name">Monthly P&L</div><div class="feat-desc">Full breakdown: revenue → COGS → labor → operating → net</div></div>
+  <div class="feat"><span class="feat-icon">💵</span><div class="feat-name">Tip Calculator</div><div class="feat-desc">Configurable front/back split from Settings</div></div>
+  <div class="feat"><span class="feat-icon">📈</span><div class="feat-name">Break-Even</div><div class="feat-desc">Covers needed, revenue target, gap analysis</div></div>
+  <div class="feat"><span class="feat-icon">🔍</span><div class="feat-name">Menu Engineering</div><div class="feat-desc">Star / Plowhorse / Puzzle / Dog classification</div></div>
+</div>
+<div class="tabs">
+  <div class="tab gold">📊 Dashboard</div><div class="tab">🍽️ Daily Sales</div><div class="tab">📋 Menu Costing</div><div class="tab">📦 Inventory</div>
+  <div class="tab">👨‍🍳 Staff Schedule</div><div class="tab">💰 Expenses</div><div class="tab gold">📊 Monthly P&L</div><div class="tab">🧾 Vendors</div>
+  <div class="tab">💵 Tips</div><div class="tab">📈 Break-Even</div><div class="tab">🗓️ Cash Flow</div><div class="tab">⭐ Feedback</div>
+  <div class="tab">🔍 Health & Safety</div><div class="tab">📊 Menu Engineering</div><div class="tab">⚙️ Settings</div><div class="tab">📖 Start Here</div>
+</div>
+<div class="bottom-bar"><span>✅</span> Instant Download | <span>✅</span> Excel + Google Sheets | <span>✅</span> Setup Guide | <span>✅</span> Demo Data Included | <span>✅</span> Sheet Protection</div>
+</body></html>
