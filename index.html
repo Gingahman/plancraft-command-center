@@ -2727,7 +2727,22 @@ function openProductModal(id) {
   if (p.files && p.files.length) {
     filesHtml += p.files.map(f => {
       const st = fileTypeStyles[f.type] || fileTypeStyles.product;
-      return `<a href="${f.name}" download="${f.name}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:${st.bg};border:1px solid ${st.border};margin-bottom:5px;text-decoration:none;transition:all 0.25s;cursor:pointer;" onmouseover="this.style.boxShadow='0 0 12px ${st.border}'" onmouseout="this.style.boxShadow='none'">
+      // Resolve Google Sheets link for this file
+      const fname = f.name.replace('GoogleSheets/','');
+      const gsName = fname.includes('GoogleSheets') ? fname : fname.replace('.xlsx','_GoogleSheets.xlsx');
+      const gsKeys = typeof googleSheetsLinks !== 'undefined' ? Object.keys(googleSheetsLinks) : [];
+      let fileUrl = '';
+      if (typeof googleSheetsLinks !== 'undefined' && googleSheetsLinks[gsName]) {
+        fileUrl = googleSheetsLinks[gsName];
+      } else {
+        const cleanName = fname.replace('.xlsx','').toLowerCase();
+        const match = gsKeys.find(k => k.toLowerCase().includes(cleanName.split('_').slice(0,2).join('_')));
+        if (match) fileUrl = googleSheetsLinks[match];
+      }
+      const href = fileUrl || '#';
+      const target = fileUrl ? '_blank' : '';
+      const action = fileUrl ? '' : 'onclick="event.preventDefault();alert(\'Файл доступен только локально\');"';
+      return `<a href="${href}" target="${target}" ${action} style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:${st.bg};border:1px solid ${st.border};margin-bottom:5px;text-decoration:none;transition:all 0.25s;cursor:pointer;" onmouseover="this.style.boxShadow='0 0 12px ${st.border}'" onmouseout="this.style.boxShadow='none'">
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:18px;">${f.icon}</span>
           <div>
@@ -2736,8 +2751,7 @@ function openProductModal(id) {
           </div>
         </div>
         <div style="display:flex;gap:5px;">
-          <span style="padding:3px 8px;background:${st.border};color:#fff;font-size:10px;font-weight:700;">⬇ Скачать</span>
-          <span onclick="event.preventDefault();event.stopPropagation();window.open('${f.name}','_blank');" style="padding:3px 8px;background:var(--bg-secondary);border:1px solid var(--border-dark);color:var(--text-primary);font-size:10px;font-weight:700;cursor:pointer;">↗ Открыть</span>
+          <span style="padding:3px 8px;background:${fileUrl ? '#34D399' : st.border};color:${fileUrl ? '#0F172A' : '#fff'};font-size:10px;font-weight:700;">${fileUrl ? '📊 Google Sheets' : '📁 Только локально'}</span>
         </div>
       </a>`;
     }).join('');
