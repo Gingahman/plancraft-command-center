@@ -2637,6 +2637,55 @@ function toggleTask(cb, phaseName, idx) {
 }
 renderPlan();
 
+// Google Sheets links mapping (must be before renderCatalog)
+const googleSheetsLinks = {
+  "Agency_Client_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Vgsgv9snxSuMNDn2lNMPendFoomcThTM/view?usp=sharing",
+  "Airbnb_Host_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1zURZokkbCQtzfGEb7Yj7ybsZ2QdWObpH/view?usp=sharing",
+  "Beekeeping_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/12Zr0-VrXSDTO8ya-250xTYuWQRmC9PF9/view?usp=sharing",
+  "Cleaning_Business_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1B8QSM_qymqa2QLkG7Jdk2XP5d0c2xMGY/view?usp=sharing",
+  "Compliance_Toolkit_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1x4DHgUe1VOqLB3fZMQReir7rhbL09hRU/view?usp=sharing",
+  "Construction_Contractor_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1AAmzWoXkxaNlnXBzfJuSF_peKsLG8QGf/view?usp=sharing",
+  "Content_Creator_Revenue_Hub_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1tLtTEEP1ovr3GJptSJlDCZ0pgKCrT-D7/view?usp=sharing",
+  "Debt_Payoff_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1AjPlKyHvSl-HNSKwK7VAqgbCXdWdhTI8/view?usp=sharing",
+  "Digital_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1jObL6mCDpDAhblqF_POfpJ_61oYuWPfI/view?usp=sharing",
+  "Dog_Breeder_Management_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1sPhxcBrfx3q_lOMWo__uQt_0OCuRXDRa/view?usp=sharing",
+  "Ecommerce_MultiPlatform_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1FQrPe0shtDaF5daVYa1pXcsT4rqsntJb/view?usp=sharing",
+  "Etsy_Seller_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1JfxQpltw1SFd3a2F9YCgFmtObUwtcA-N/view?usp=sharing",
+  "Farm_Business_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1F05KF7J98JNYW4LfumV-ph-m6SmHYEiz/view?usp=sharing",
+  "Fitness_Meal_Prep_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1uRk3axfvbCMqB0eFWo2DYdVCuwfJGGcN/view?usp=sharing",
+  "Food_Truck_Business_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1JVPWbfKwrVQPh8w4-V0kE0_YyBEJQTNT/view?usp=sharing",
+  "Free_Monthly_Budget_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1mzUZqAIpQkk0y6YDK4zVKb9u6U7SPFJV/view?usp=sharing",
+  "Freelancer_Income_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1v-xP4XEGgj7C03M5ypBCnKzXFaIBJf91/view?usp=sharing",
+  "HOA_Management_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/14JVLPpXfCEhYzF3o_dCDWu_UwF9gM1fb/view?usp=sharing",
+  "Habit_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1tJhXEGSwW4UpWyiXX4_QrQOqoJbPi9qZ/view?usp=sharing",
+  "Home_Renovation_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1K9JyPR_4VrL0rqS9j8_SkqQ7pxVKg91D/view?usp=sharing",
+  "Instagram_Templates_50_Pack_GoogleSheets.xlsx": "https://drive.google.com/file/d/1rL8j7K1jgpQi2FEZzZb7JqD8PQ17o5NT/view?usp=sharing",
+  "Investment_Portfolio_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1f8AhF2L-Y8rCfvKnI9E4-9R7lJXBOXXr/view?usp=sharing",
+  "KPI_Dashboard_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1k5PY6vL0G5nCqFrJM8oP7lYg5-x5p7Bj/view?usp=sharing",
+  "Law_Firm_Billing_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1eCr4kPjbB6vc0i_2gYZ9r73xjZhJ4x-t/view?usp=sharing",
+  "Meal_Planner_Grocery_Budget_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1KqfnR7sLPdQ8vpW4B_K8f0J9Y5mXv7vT/view?usp=sharing",
+  "Music_Teacher_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1i3b_w5KU5Y22v7l8QJcgaWVHkjXsRBel/view?usp=sharing",
+  "Notion_Life_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1HxGnN7kTh6rLWiXD0Jf5hJ9vkZfYmT3R/view?usp=sharing",
+  "Personal_Finance_Dashboard_2027_GoogleSheets.xlsx": "https://drive.google.com/file/d/1BqAhT4LdF8n2Kp0jMvQ6s9xRwY3cZe5P/view?usp=sharing",
+  "Real_Estate_Agent_CRM_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1NpV8rKjD3hFbX0mY7cL4s2wQzT9iAe6G/view?usp=sharing",
+  "Rental_Property_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1WkM5tPjC2fGdR8nX6bL3s0yQxV7hAi4J/view?usp=sharing",
+  "Restaurant_Cafe_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1ZnR9uOkB4gHcS7mW5aK2p1xTvU6jDf3I/view?usp=sharing",
+  "Salon_Spa_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1YmQ8tNjA3fGbR6lV4zJ1o0wSuT5iCe2H/view?usp=sharing",
+  "Savings_Goal_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1XlP7sMiZ2eF_aQ5kU3yI0n9vRtS4hBd1G/view?usp=sharing",
+  "Self_Employed_Tax_Prep_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1DcH6qJfW0bE3pN4hS2wG8k7tOsP1gAr9/view?usp=sharing",
+  "Small_Business_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1CbG5pIfV9aD2oM3gR1vF7j6sNrO0fZq8/view?usp=sharing",
+  "Social_Media_Calendar_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1BaF4oHeU8zC1nL2fQ0uE6i5rMqN9eYp7/view?usp=sharing",
+  "Sports_Betting_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1AzE3nGdT7yB0mK1eP9tD5h4qLpM8dXo6/view?usp=sharing",
+  "Student_Budget_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1ZyD2mFcS6xA9lJ0dO8sC4g3pKoL7cWn5/view?usp=sharing",
+  "Subscription_Manager_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1YxC1lEbR5wZ8kI9cN7rB3f2oJnK6bVm4/view?usp=sharing",
+  "Tattoo_Shop_Dashboard_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1XwB0kDaQ4vY7jH8bM6qA2e1nImJ5aUl3/view?usp=sharing",
+  "Ultimate_Budget_Dashboard_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1WvA9jCzP3uX6iG7aL5p01d0mHlI4zTk2/view?usp=sharing",
+  "VetDental_Clinic_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Vu98iBxO2tW5hF6zK4o91c9lGkH3yRj1/view?usp=sharing",
+  "Wedding_Budget_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Ut87hAwN1sV4gE5yJ3n80b8kFjG2xQi0/view?usp=sharing",
+  "Wedding_Planning_Complete_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Ts76gZvM0rU3fD4xI2m79a7jEiF1wPh9/view?usp=sharing",
+  "Yoga_Studio_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Sr65fYuL9qT2eC3wH1l68z6iDhE0vOg8/view?usp=sharing",
+};
+
 // === TAB 3: Catalog ===
 function renderCatalog(filter) {
   filter = filter || 'all';
@@ -3376,55 +3425,6 @@ function showSheet(btn, idx) {
     p.style.display = p.dataset.idx == idx ? "block" : "none";
   });
 }
-
-
-const googleSheetsLinks = {
-  "Agency_Client_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Vgsgv9snxSuMNDn2lNMPendFoomcThTM/view?usp=sharing",
-  "Airbnb_Host_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1zURZokkbCQtzfGEb7Yj7ybsZ2QdWObpH/view?usp=sharing",
-  "Beekeeping_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/12Zr0-VrXSDTO8ya-250xTYuWQRmC9PF9/view?usp=sharing",
-  "Cleaning_Business_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1B8QSM_qymqa2QLkG7Jdk2XP5d0c2xMGY/view?usp=sharing",
-  "Compliance_Toolkit_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1x4DHgUe1VOqLB3fZMQReir7rhbL09hRU/view?usp=sharing",
-  "Construction_Contractor_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1AAmzWoXkxaNlnXBzfJuSF_peKsLG8QGf/view?usp=sharing",
-  "Content_Creator_Revenue_Hub_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1tLtTEEP1ovr3GJptSJlDCZ0pgKCrT-D7/view?usp=sharing",
-  "Debt_Payoff_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1AjPlKyHvSl-HNSKwK7VAqgbCXdWdhTI8/view?usp=sharing",
-  "Digital_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1jObL6mCDpDAhblqF_POfpJ_61oYuWPfI/view?usp=sharing",
-  "Dog_Breeder_Management_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1sPhxcBrfx3q_lOMWo__uQt_0OCuRXDRa/view?usp=sharing",
-  "Ecommerce_MultiPlatform_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1FQrPe0shtDaF5daVYa1pXcsT4rqsntJb/view?usp=sharing",
-  "Etsy_Seller_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1JfxQpltw1SFd3a2F9YCgFmtObUwtcA-N/view?usp=sharing",
-  "Farm_Business_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1F05KF7J98JNYW4LfumV-ph-m6SmHYEiz/view?usp=sharing",
-  "Fitness_Meal_Prep_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1uRk3axfvbCMqB0eFWo2DYdVCuwfJGGcN/view?usp=sharing",
-  "Food_Truck_Business_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1JVPWbfKwrVQPh8w4-V0kE0_YyBEJQTNT/view?usp=sharing",
-  "Free_Monthly_Budget_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1mzUZqAIpQkk0y6YDK4zVKb9u6U7SPFJV/view?usp=sharing",
-  "Freelancer_Income_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1v-xP4XEGgj7C03M5ypBCnKzXFaIBJf91/view?usp=sharing",
-  "HOA_Management_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/14JVLPpXfCEhYzF3o_dCDWu_UwF9gM1fb/view?usp=sharing",
-  "Habit_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1tJhXEGSwW4UpWyiXX4_QrQOqoJbPi9qZ/view?usp=sharing",
-  "Home_Renovation_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1K9JyPR_4VrL0rqS9j8_SkqQ7pxVKg91D/view?usp=sharing",
-  "Instagram_Templates_50_Pack_GoogleSheets.xlsx": "https://drive.google.com/file/d/1rL8j7K1jgpQi2FEZzZb7JqD8PQ17o5NT/view?usp=sharing",
-  "Investment_Portfolio_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1f8AhF2L-Y8rCfvKnI9E4-9R7lJXBOXXr/view?usp=sharing",
-  "KPI_Dashboard_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1k5PY6vL0G5nCqFrJM8oP7lYg5-x5p7Bj/view?usp=sharing",
-  "Law_Firm_Billing_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1eCr4kPjbB6vc0i_2gYZ9r73xjZhJ4x-t/view?usp=sharing",
-  "Meal_Planner_Grocery_Budget_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1KqfnR7sLPdQ8vpW4B_K8f0J9Y5mXv7vT/view?usp=sharing",
-  "Music_Teacher_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1i3b_w5KU5Y22v7l8QJcgaWVHkjXsRBel/view?usp=sharing",
-  "Notion_Life_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1HxGnN7kTh6rLWiXD0Jf5hJ9vkZfYmT3R/view?usp=sharing",
-  "Personal_Finance_Dashboard_2027_GoogleSheets.xlsx": "https://drive.google.com/file/d/1BqAhT4LdF8n2Kp0jMvQ6s9xRwY3cZe5P/view?usp=sharing",
-  "Real_Estate_Agent_CRM_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1NpV8rKjD3hFbX0mY7cL4s2wQzT9iAe6G/view?usp=sharing",
-  "Rental_Property_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1WkM5tPjC2fGdR8nX6bL3s0yQxV7hAi4J/view?usp=sharing",
-  "Restaurant_Cafe_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1ZnR9uOkB4gHcS7mW5aK2p1xTvU6jDf3I/view?usp=sharing",
-  "Salon_Spa_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1YmQ8tNjA3fGbR6lV4zJ1o0wSuT5iCe2H/view?usp=sharing",
-  "Savings_Goal_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1XlP7sMiZ2eF_aQ5kU3yI0n9vRtS4hBd1G/view?usp=sharing",
-  "Self_Employed_Tax_Prep_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1DcH6qJfW0bE3pN4hS2wG8k7tOsP1gAr9/view?usp=sharing",
-  "Small_Business_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1CbG5pIfV9aD2oM3gR1vF7j6sNrO0fZq8/view?usp=sharing",
-  "Social_Media_Calendar_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1BaF4oHeU8zC1nL2fQ0uE6i5rMqN9eYp7/view?usp=sharing",
-  "Sports_Betting_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1AzE3nGdT7yB0mK1eP9tD5h4qLpM8dXo6/view?usp=sharing",
-  "Student_Budget_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1ZyD2mFcS6xA9lJ0dO8sC4g3pKoL7cWn5/view?usp=sharing",
-  "Subscription_Manager_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1YxC1lEbR5wZ8kI9cN7rB3f2oJnK6bVm4/view?usp=sharing",
-  "Tattoo_Shop_Dashboard_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1XwB0kDaQ4vY7jH8bM6qA2e1nImJ5aUl3/view?usp=sharing",
-  "Ultimate_Budget_Dashboard_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1WvA9jCzP3uX6iG7aL5p01d0mHlI4zTk2/view?usp=sharing",
-  "VetDental_Clinic_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Vu98iBxO2tW5hF6zK4o91c9lGkH3yRj1/view?usp=sharing",
-  "Wedding_Budget_Planner_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Ut87hAwN1sV4gE5yJ3n80b8kFjG2xQi0/view?usp=sharing",
-  "Wedding_Planning_Complete_OS_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Ts76gZvM0rU3fD4xI2m79a7jEiF1wPh9/view?usp=sharing",
-  "Yoga_Studio_Tracker_2026_GoogleSheets.xlsx": "https://drive.google.com/file/d/1Sr65fYuL9qT2eC3wH1l68z6iDhE0vOg8/view?usp=sharing",
-};
 
 
 // Add Google Sheets open button to product detail viewer
